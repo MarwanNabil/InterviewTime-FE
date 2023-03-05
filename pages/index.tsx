@@ -5,15 +5,17 @@ import pageI from "@helpers/Interfaces/Page"
 
 //UI
 import NavBar from '@components/ui/NavBar'
+import Container from '@mui/material/Container';
+
 
 //Single Pages
-import Calendar from '@components/SinglePages/Calendar';
+import CalendarPage from './../components/SinglePages/Calendar';
 
 export default function LandingPage() {
     const tabs: Array<pageI> = [
         {
             label: "Calendar",
-            component: <Calendar />
+            component: <CalendarPage />
         },
         {
             label: "Interviews",
@@ -26,6 +28,10 @@ export default function LandingPage() {
     ];
 
     const settings: Array<pageI> = [
+        {
+            label: "Profile",
+            component: <></>
+        },
         {
             label: "Settings",
             component: <></>
@@ -45,6 +51,8 @@ export default function LandingPage() {
         setActivePageValue(newValue);
     };
 
+
+
     const activePageHook = {
         activePageValue: activePageValue,
         activePageHandler: activePageHandler
@@ -61,7 +69,9 @@ export default function LandingPage() {
     return (
         <div style={{ margin: -8 }}>
             <NavBar tabs={tabs} settings={settings} activePageHook={activePageHook} />
-            {pageToBeRendered}
+            <Container maxWidth="md">
+                {pageToBeRendered}
+            </Container>
         </div>
     )
 }

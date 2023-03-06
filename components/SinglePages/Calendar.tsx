@@ -16,9 +16,24 @@ import FormLabel from '@mui/material/FormLabel';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import Paper, { PaperProps } from '@mui/material/Paper';
+import Draggable from 'react-draggable';
 
 //Helpers
-import { InterviewsTypesData, dummyInterviewsTimes } from '@helpers/constants';
+import { InterviewTypesArray, NA, dummyInterviewsTimes } from '@helpers/index';
+
+//to make the diaglog draggable
+function PaperComponent(props: PaperProps) {
+    return (
+        <Draggable
+            handle="#draggable-dialog-title"
+            cancel={'[class*="MuiDialogContent-root"]'}
+        >
+            <Paper {...props} />
+        </Draggable>
+    );
+}
+
 
 export default function CalendarPage() {
 
@@ -34,10 +49,11 @@ export default function CalendarPage() {
     };
 
     //Diaglog Related
-    const [interviewTypeIndex, setInterviewTypeIndex] = React.useState("0");
+    const defaultNoneForInterviewCode = NA.code;
+    const [interviewTypeCode, setInterviewTypeCode] = React.useState(NA.code);
 
     const InterviewTypeChangeHandler = (event: SelectChangeEvent) => {
-        setInterviewTypeIndex(event.target.value);
+        setInterviewTypeCode(event.target.value);
     };
 
     //Interviews Dates
@@ -63,9 +79,7 @@ export default function CalendarPage() {
                 <Button variant="contained" size="medium" onClick={scheduleOpen}>
                     Schedule
                 </Button>
-
-
-                <Dialog open={openSchedule} onClose={scheduleClose}>
+                <Dialog open={openSchedule} onClose={scheduleClose} PaperComponent={PaperComponent} aria-labelledby="draggable-dialog-title" >
                     <DialogTitle>Schedule an Interview</DialogTitle>
                     <DialogContent style={{ display: "flex", flexDirection: 'column', rowGap: 20 }}>
                         <DialogContentText>
@@ -77,10 +91,10 @@ export default function CalendarPage() {
                             <Select
                                 labelId="demo-select-small"
                                 id="demo-select-small"
-                                value={interviewTypeIndex + ""}
+                                value={interviewTypeCode}
                                 onChange={InterviewTypeChangeHandler}
                             >
-                                {InterviewsTypesData.map(item => <MenuItem value={item.id}>{item.name}</MenuItem>)}
+                                {InterviewTypesArray.map(item => <MenuItem value={item.code}>{item.name + ` (${item.code})`}</MenuItem>)}
                             </Select>
                             <br />
                             <FormLabel id="demo-row-radio-buttons-group-label">Interview Date (DD:MM)</FormLabel>
@@ -90,17 +104,17 @@ export default function CalendarPage() {
                                 name="row-radio-buttons-group"
                                 value={interviewDateValue}
                                 onChange={interviewDateHandler}>
-                                <FormControlLabel value="5/3" control={<Radio />} label="5/3" disabled={interviewTypeIndex === '0' || true} />
-                                <FormControlLabel value="6/3" control={<Radio />} label="6/3" disabled={interviewTypeIndex === '0' || true} />
-                                <FormControlLabel value="7/3" control={<Radio />} label="7/3" disabled={interviewTypeIndex === '0'} />
-                                <FormControlLabel value="8/3" control={<Radio />} label="8/3" disabled={interviewTypeIndex === '0'} />
-                                <FormControlLabel value="9/3" control={<Radio />} label="9/3" disabled={interviewTypeIndex === '0'} />
+                                <FormControlLabel value="5/3" control={<Radio />} label="5/3" disabled={interviewTypeCode === defaultNoneForInterviewCode || true} />
+                                <FormControlLabel value="6/3" control={<Radio />} label="6/3" disabled={interviewTypeCode === defaultNoneForInterviewCode || true} />
+                                <FormControlLabel value="7/3" control={<Radio />} label="7/3" disabled={interviewTypeCode === defaultNoneForInterviewCode} />
+                                <FormControlLabel value="8/3" control={<Radio />} label="8/3" disabled={interviewTypeCode === defaultNoneForInterviewCode} />
+                                <FormControlLabel value="9/3" control={<Radio />} label="9/3" disabled={interviewTypeCode === defaultNoneForInterviewCode} />
                             </RadioGroup>
                             <br />
                             <FormLabel id="time-suggest">Time Suggestions</FormLabel>
                             <Stack direction="row" flexWrap="wrap" rowGap={0.5} columnGap={1} >
                                 {dummyInterviewsTimes.map((appointment, i) => (
-                                    <Button color={appointment.status} variant={i == timeIndex ? 'contained' : 'outlined'} onClick={(event) => onTimeClickHandler(event, i)} disabled={interviewTypeIndex === '0'}>
+                                    <Button color={appointment.status} variant={i == timeIndex ? 'contained' : 'outlined'} onClick={(event) => onTimeClickHandler(event, i)} disabled={interviewTypeCode === defaultNoneForInterviewCode}>
                                         {appointment.time}
                                     </Button>
                                 ))}
@@ -112,8 +126,6 @@ export default function CalendarPage() {
                                 <LinearProgress />
                             </Box>
                         </FormControl>
-
-
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={scheduleClose} >Cancel</Button>

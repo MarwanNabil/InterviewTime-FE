@@ -9,7 +9,8 @@ import Container from '@mui/material/Container';
 
 
 //Single Pages
-import CalendarPage from './../components/SinglePages/Calendar';
+import CalendarPage from '@components/SinglePages/Calendar';
+import Profile from '@components/SinglePages/Profile';
 
 export default function LandingPage() {
     const tabs: Array<pageI> = [
@@ -30,7 +31,7 @@ export default function LandingPage() {
     const settings: Array<pageI> = [
         {
             label: "Profile",
-            component: <></>
+            component: <Profile />
         },
         {
             label: "Settings",

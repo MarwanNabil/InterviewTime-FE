@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "urbanist";
+  src: url("../public/fonts/Urbanist/Urbanist-VariableFont_wght.ttf");
+  /* src: url("../public/fonts/Urbanist/Urbanist-Italic-VariableFont_wght.ttf"); */
+}
+
+body {
+  margin-top: 20;
+}

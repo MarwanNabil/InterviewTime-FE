@@ -18,10 +18,16 @@ import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import Paper, { PaperProps } from '@mui/material/Paper';
 import Draggable from 'react-draggable';
+import { ButtonGroup } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add'
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import IconButton from '@mui/material/IconButton';
+import DateRangeIcon from '@mui/icons-material/DateRange';
 
 //Calendar
 import { DateTime } from "luxon";
-import { Calendar, luxonLocalizer, momentLocalizer, Event, DateHeaderProps } from "react-big-calendar";
+import { Calendar, luxonLocalizer, momentLocalizer, Event, DateHeaderProps, DateCellWrapperProps } from "react-big-calendar";
 import moment from 'moment'
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { ToolbarProps, HeaderProps, EventProps, CalendarProps } from 'react-big-calendar';
@@ -31,6 +37,7 @@ const localizer = momentLocalizer(moment)
 //Helpers
 import { InterviewTypesArray, NA, dummyInterviewsTimes } from '@helpers/index';
 import { BorderLeftRounded } from '@mui/icons-material';
+import Container from '@mui/material/Container';
 
 //to make the diaglog draggable
 function PaperComponent(props: PaperProps) {
@@ -87,7 +94,7 @@ export default function CalendarPage() {
 
     const eventCalendarShape = (title: string, startDate: Date) => {
         let brdColor = "#F02525";
-        let bgColor = "#FFB7B7"
+        let bgColor = "#FFB7B7";
         if (title === "OOP") {
             brdColor = '#F02525';
             bgColor = '#FFB7B7';
@@ -98,12 +105,12 @@ export default function CalendarPage() {
             brdColor = '#50F025'
             bgColor = '#B9FFA6';
         }
+
         return (
             <div style={{
                 display: 'flex', flexDirection: "row", alignItems: 'end', columnGap: 5,
-                backgroundColor: bgColor, borderLeftColor: brdColor, borderLeftWidth: 4,
-                borderLeft: 'solid', justifyContent: 'space-between', paddingInline: 4,
-                borderRadius: 2
+                borderLeftWidth: 4, borderLeft: 'solid', justifyContent: 'space-between', paddingInline: 4,
+                borderRadius: 2, backgroundColor: bgColor, borderLeftColor: brdColor,
             }
             }>
                 <div style={{ fontWeight: 'normal', fontFamily: 'monospace', fontSize: 13 }}> {title}</div >
@@ -114,18 +121,18 @@ export default function CalendarPage() {
 
     const myEventsList: Event[] = [
         {
-            title: eventCalendarShape("PS", new Date()),
+            title: eventCalendarShape("PS", new Date("2023-04-08T10:00")),
             start: new Date("2023-04-08T10:00"),
             end: new Date("2023-04-08T17:00"),
 
         },
         {
-            title: eventCalendarShape("OOP", new Date()),
+            title: eventCalendarShape("OOP", new Date("2023-04-08T23:00")),
             start: new Date("2023-04-08T23:00"),
             end: new Date("2023-04-08T23:39")
         },
         {
-            title: eventCalendarShape("DB", new Date()),
+            title: eventCalendarShape("DB", new Date("2023-04-10T23:00")),
             start: new Date("2023-04-10T23:00"),
             end: new Date("2023-04-10T23:39")
         },
@@ -149,19 +156,40 @@ export default function CalendarPage() {
         const viewHandler = (action: any) => {
             props.onView(action);
         }
+        const monthLabel = props.label.split(' ')[0].slice(0, 3);
+        const yearLabel = props.label.split(' ')[1];
+
         return (
-            <div className="rbc-toolbar">
-                <span className="rbc-btn-group">
-                    <button type="button" onClick={viewHandler.bind(null, viewActions.DAY)}>Day</button>
-                    <button type="button" onClick={viewHandler.bind(null, viewActions.WEEK)}>Week</button>
-                    <button type="button" onClick={viewHandler.bind(null, viewActions.MONTH)}>Month</button>
-                </span>
-                <span className="rbc-toolbar-label">{props.label}</span>
-                <span className="rbc-btn-group">
-                    <button type="button" onClick={viewHandler.bind(null, viewActions.AGENDA)}>Agenda</button>
-                    <button type="button" onClick={navigateHandler.bind(null, navigateActions.NEXT)}>Schedule</button>
-                </span>
-            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 150 }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', columnGap: 2 }}>
+                        <span style={{ fontSize: 25, fontWeight: 700 }}>{monthLabel}</span>
+                        <span style={{ fontSize: 14, fontWeight: 500 }}>{yearLabel}</span>
+                    </div>
+                    <div>
+                        <IconButton onClick={navigateHandler.bind(null, navigateActions.PREVIOUS)}>
+                            < NavigateBeforeIcon style={{ color: '#9fa3ac', fontSize: 15 }} />
+                        </IconButton>
+                        <IconButton onClick={navigateHandler.bind(null, navigateActions.NEXT)}>
+                            < NavigateNextIcon style={{ color: '#9fa3ac', fontSize: 15 }} />
+                        </IconButton>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', columnGap: 15, alignItems: 'center' }}>
+                    <Button variant='contained' size='small' color='info'
+                        style={{
+                            fontFamily: 'urbanist', fontSize: 14, fontWeight: 300,
+                            textTransform: 'capitalize'
+                        }}
+                        startIcon={<DateRangeIcon style={{ fontSize: 15 }} />}>Agenda</Button>
+                    <Button variant="contained" size='small'
+                        style={{
+                            fontFamily: 'urbanist', fontSize: 14, fontWeight: 300,
+                            backgroundColor: '#4382fe', textTransform: 'capitalize'
+                        }}
+                        startIcon={<AddIcon style={{ fontSize: 15 }} />}>Interview</Button>
+                </div>
+            </div >
         )
     }
 
@@ -231,7 +259,7 @@ export default function CalendarPage() {
 
 
         // </div >
-        <div style={{ padding: 20 }}>
+        <Container style={{ padding: 20 }} >
 
             <Calendar
                 localizer={localizer}
@@ -240,9 +268,9 @@ export default function CalendarPage() {
                 endAccessor="end"
                 style={{
                     height: "80vh",
-                    textTransform: 'uppercase',
-                    fontFamily: 'monospace',
-                    fontSize: 18,
+                    // textTransform: 'uppercase',
+                    fontFamily: 'Urbanist',
+                    fontStyle: 'initial'
                 }}
                 onShowMore={(events, date) => {
                     //display all events on that day.
@@ -250,70 +278,71 @@ export default function CalendarPage() {
                 defaultView='month'
                 components={{
                     toolbar: toolbarHandler,
+                    dateCellWrapper: (props: DateCellWrapperProps) => {
+                        //this is for cell wrapper styling
+                        return (<div style={{
+                            backgroundColor: '#fafcfe', flex: 1, borderRight: 'solid',
+                            borderWidth: 'thin', borderRightColor: '#dddddd'
+                        }}></div>
+                        )
+                    },
                     month: {
+
                         //for month view
                         dateHeader: (props: DateHeaderProps) => {
                             const currentDate = new Date();
-                            const label = props.label[0] === '0' ? props.label[1] : props.label
+                            const label = props.label[0] === '0' ? props.label[1] : props.label;
+                            const isToday = props.date.toDateString() === currentDate.toDateString();
+                            let bordeStyle: React.CSSProperties = { marginTop: 3 };
+                            if (isToday) {
+                                bordeStyle = {
+                                    color: 'white', backgroundColor: '#1A75D2',
+                                    width: 22, height: 22, borderRadius: 11,
+                                    borderColor: '#1A75D2', alignItems: 'center',
+                                    display: 'flex'
+                                };
+                            }
                             return (
-                                <div style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'center',
-                                    paddingTop: 4
-                                }}>
-                                    {props.date.toDateString() === currentDate.toDateString() &&
-                                        <div style={{ backgroundColor: '#1892F3', padding: 4, color: 'white', borderRadius: 20 }}>
+                                <div style={{ paddingBlock: 3, display: 'flex', justifyContent: 'center' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', fontWeight: 500, fontSize: 15, ...bordeStyle }}>
+                                        <div style={{ textAlign: 'center' }}>
                                             {label}
                                         </div>
-                                    }
-                                    {props.date.toDateString() !== currentDate.toDateString() &&
-                                        <div>
-                                            {label}
-                                        </div>
-                                    }
-                                </div >
+                                    </div>
+                                </div>
                             )
                         },
-                        // header: (props: CalendarProps) => {
-                        //     return (<div></div>);
-                        // },                     
-                        // event: (props: CalendarProps) => {
-                        //     return (<div>
-                        //         {props.components}
-                        //     </div>);
-                        // }
+                        header: (props: HeaderProps) => {
+                            //for week days MON,SUN ...
+                            return (<div style={{ paddingBlock: 15, textTransform: 'uppercase', fontWeight: 700 }}>{props.label}</div>);
+                        },
+
                     },
-                    day: {
-                        header: (props: CalendarProps<Event, object> | Readonly<CalendarProps<Event, object>>) => {
-                            return (<div>{props.date?.toString()}</div>)
-                        }
-                    }
                 }}
                 eventPropGetter={(event, start, end, isSelected) => {
-                    let newStyle = {
+                    //to trigger a specific event when it's being selected..
+                    let newStyle: React.CSSProperties = {
                         backgroundColor: "transparent",
                         color: 'black',
-                        borderRadius: "5px",
-                        // border: 'groove'
+                        borderRadius: 3,
+                        borderInline: 0
                     };
-
-                    // event.title =
-                    //     (<div style={{ flex: "row", alignItems: "center" }}>
-                    //         <div style={{ width: 10, borderRadius: 10, backgroundColor: '#FF5733' }}> </div>
-                    //         <div>{event.title + '-'} </div>
-                    //     </div>);
-
-                    // // if (isSelected) {
-                    // //     newStyle.backgroundColor = "red"
-                    // // }
+                    if (isSelected) {
+                        newStyle = {
+                            ...newStyle,
+                            borderColor: "white",
+                            paddingBlock: 1,
+                            paddingInline: 1
+                        }
+                    }
 
                     return {
                         className: "",
                         style: newStyle
                     };
                 }}
+
             />
-        </div >
+        </Container >
     );
 }

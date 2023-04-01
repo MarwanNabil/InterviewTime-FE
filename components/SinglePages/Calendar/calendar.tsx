@@ -24,6 +24,8 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import IconButton from '@mui/material/IconButton';
 import DateRangeIcon from '@mui/icons-material/DateRange';
+import Container from '@mui/material/Container';
+import { Route, Routes } from 'react-router-dom';
 
 //Calendar
 import { DateTime } from "luxon";
@@ -37,7 +39,6 @@ const localizer = momentLocalizer(moment)
 //Helpers
 import { InterviewTypesArray, NA, dummyInterviewsTimes } from '@helpers/index';
 import { BorderLeftRounded } from '@mui/icons-material';
-import Container from '@mui/material/Container';
 
 //to make the diaglog draggable
 function PaperComponent(props: PaperProps) {
@@ -52,7 +53,7 @@ function PaperComponent(props: PaperProps) {
 }
 
 
-export default function CalendarPage() {
+export default function CalendarTool() {
 
     //Schedule Hook
     const [openSchedule, setOpenSchedule] = React.useState(false);
@@ -194,72 +195,7 @@ export default function CalendarPage() {
     }
 
     return (
-        // <div style={{ padding: 80, display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end' }}>
-        //     <div style={{
-        //         display: 'flex', flexDirection: 'row', justifyItems: 'end'
-        //     }}>
-        //         <Button variant="contained" size="medium" onClick={scheduleOpen}>
-        //             Schedule
-        //         </Button>
-        //         <Dialog open={openSchedule} onClose={scheduleClose} PaperComponent={PaperComponent} aria-labelledby="draggable-dialog-title" >
-        //             <DialogTitle>Schedule an Interview</DialogTitle>
-        //             <DialogContent style={{ display: "flex", flexDirection: 'column', rowGap: 20 }}>
-        //                 <DialogContentText>
-        //                     To schedule an interview, you should now your interview's type and its appointment.
-        //                 </DialogContentText>
-
-        //                 <FormControl sx={{ rowGap: 0.5, maxWidth: 600 }} size="small">
-        //                     <FormLabel id="demo-select-small">Interview Type</FormLabel>
-        //                     <Select
-        //                         labelId="demo-select-small"
-        //                         id="demo-select-small"
-        //                         value={interviewTypeCode}
-        //                         onChange={InterviewTypeChangeHandler}
-        //                     >
-        //                         {InterviewTypesArray.map(item => <MenuItem value={item.code}>{item.name + ` (${item.code})`}</MenuItem>)}
-        //                     </Select>
-        //                     <br />
-        //                     <FormLabel id="demo-row-radio-buttons-group-label">Interview Date (DD:MM)</FormLabel>
-        //                     <RadioGroup
-        //                         row
-        //                         aria-labelledby="demo-row-radio-buttons-group-label"
-        //                         name="row-radio-buttons-group"
-        //                         value={interviewDateValue}
-        //                         onChange={interviewDateHandler}>
-        //                         <FormControlLabel value="5/3" control={<Radio />} label="5/3" disabled={interviewTypeCode === defaultNoneForInterviewCode || true} />
-        //                         <FormControlLabel value="6/3" control={<Radio />} label="6/3" disabled={interviewTypeCode === defaultNoneForInterviewCode || true} />
-        //                         <FormControlLabel value="7/3" control={<Radio />} label="7/3" disabled={interviewTypeCode === defaultNoneForInterviewCode} />
-        //                         <FormControlLabel value="8/3" control={<Radio />} label="8/3" disabled={interviewTypeCode === defaultNoneForInterviewCode} />
-        //                         <FormControlLabel value="9/3" control={<Radio />} label="9/3" disabled={interviewTypeCode === defaultNoneForInterviewCode} />
-        //                     </RadioGroup>
-        //                     <br />
-        //                     <FormLabel id="time-suggest">Time Suggestions</FormLabel>
-        //                     <Stack direction="row" flexWrap="wrap" rowGap={0.5} columnGap={1} >
-        //                         {dummyInterviewsTimes.map((appointment, i) => (
-        //                             <Button color={appointment.status} variant={i == timeIndex ? 'contained' : 'outlined'} onClick={(event) => onTimeClickHandler(event, i)} disabled={interviewTypeCode === defaultNoneForInterviewCode}>
-        //                                 {appointment.time}
-        //                             </Button>
-        //                         ))}
-        //                     </Stack>
-        //                     <DialogContentText fontSize={10}>
-        //                         Green buttons is awaiting one person to get started, so it's recommended to be taken.
-        //                     </DialogContentText>
-        //                     <Box sx={{ width: '100%' }}>
-        //                         <LinearProgress />
-        //                     </Box>
-        //                 </FormControl>
-        //             </DialogContent>
-        //             <DialogActions>
-        //                 <Button onClick={scheduleClose} >Cancel</Button>
-        //                 <Button onClick={scheduleClose} disabled>Schedule</Button>
-        //             </DialogActions>
-        //         </Dialog>
-        //     </div >
-        //     {/* <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23EAEAEE&ctz=Africa%2FCairo&showTz=1&showCalendars=0&showPrint=0&showTitle=0&src=NjhmODVhOGY3Mjg0MmY4ZDIyMmMzMmYxNjllN2YyYjE1N2Q3YmI0MDg3YTg0NzA4NGUwM2FmNTg3ZjU1MjE1MEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23AD1457" width="800" height="600"></iframe> */}
-
-
-        // </div >
-        <Container style={{ padding: 20 }} >
+        < Container maxWidth='xl' style={{ padding: 20 }} >
 
             <Calendar
                 localizer={localizer}

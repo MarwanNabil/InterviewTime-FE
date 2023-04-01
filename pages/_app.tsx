@@ -1,9 +1,22 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
+import { BrowserRouter } from 'react-router-dom'
+import { useEffect, useState } from 'react';
 
-function MyApp({ Component }: AppProps) {
+//UI
+import { ProSidebarProvider } from 'react-pro-sidebar';
+
+function MyApp({ Component, pageProps }: AppProps) {
+    const [render, setRender] = useState(false);
+    useEffect(() => setRender(true), []);
     return (
-        <Component />
+        render ?
+            <BrowserRouter>
+                <ProSidebarProvider>
+                    <Component {...pageProps} />
+                </ProSidebarProvider>
+            </BrowserRouter>
+            : null
     )
 }
 

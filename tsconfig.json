@@ -27,7 +27,8 @@
       // "@contexts/*": ["contexts/*"],
       "@pages/*": ["pages/*"],
       // "@helpers/*": ["helpers/*"],
-      "@public/*": ["public/*"]
+      "@public/*": ["public/*"],
+      "@images": ["public/images/*"]
     }
   },
   "include": [

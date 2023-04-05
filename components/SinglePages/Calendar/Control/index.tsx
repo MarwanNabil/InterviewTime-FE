@@ -21,6 +21,7 @@ import PermMedia from '@mui/icons-material/PermMedia';
 import Dns from '@mui/icons-material/Dns';
 import Public from '@mui/icons-material/Public';
 import CircleIcon from '@mui/icons-material/Circle';
+import Interview from './interview';
 
 // https://codesandbox.io/s/ufxciz?file=/demo.tsx:5499-5574
 
@@ -33,10 +34,10 @@ const data = [
 
 const ControlCalendar = () => {
 
-    const [toggledCategories, setToggleCategories] = React.useState(true);
     const [toggledAgenda, setToggleAgenda] = React.useState(false);
-    const [toggledInterview, setToggleInterview] = React.useState(false);
     const [toggledDetails, setToggleDetails] = React.useState(false);
+    const [toggledInterview, setToggleInterview] = React.useState(false);
+    const [toggledCategories, setToggleCategories] = React.useState(true);
 
     return (
         <div>
@@ -166,7 +167,6 @@ const ControlCalendar = () => {
                         p: 3,
                         '&:hover, &:focus': { '& svg': { opacity: toggledInterview ? 1 : 0 } },
                     }}
-                    disabled
                 >
                     <ListItemText
                         primary="Interview"
@@ -195,21 +195,7 @@ const ControlCalendar = () => {
                         }}
                     />
                 </ListItemButton>
-                {toggledInterview &&
-                    data.map((item) => (
-                        <ListItemButton
-                            key={item.label}
-                            sx={{ py: 0, minHeight: 32, color: 'black', fontFamily: 'urbanist' }}
-                        >
-                            <ListItemIcon>
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText
-                                primary={item.label}
-                                primaryTypographyProps={{ fontSize: 14, fontWeight: 'medium', fontFamily: 'urbanist' }}
-                            />
-                        </ListItemButton>
-                    ))}
+                {toggledInterview && <Interview />}
             </Box>
             <Box sx={{
                 color: 'black',

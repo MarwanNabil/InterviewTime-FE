@@ -40,17 +40,11 @@ const localizer = momentLocalizer(moment)
 import { InterviewTypesArray, NA, dummyInterviewsTimes } from '@helpers/index';
 import { BorderLeftRounded } from '@mui/icons-material';
 
-//to make the diaglog draggable
-function PaperComponent(props: PaperProps) {
-    return (
-        <Draggable
-            handle="#draggable-dialog-title"
-            cancel={'[class*="MuiDialogContent-root"]'}
-        >
-            <Paper {...props} />
-        </Draggable>
-    );
-}
+//Store
+import { useDispatch } from 'react-redux'
+import { interviewActions } from 'redux/index';
+import { useEffect } from 'react';
+
 
 
 export default function CalendarTool() {
@@ -89,6 +83,16 @@ export default function CalendarTool() {
         setTimeIndex(key)
     }
 
+    //Events
+    const dispatch = useDispatch()
+
+    const trial = async () => {
+        await dispatch(interviewActions.list());
+    }
+
+    useEffect(() => {
+        trial();
+    }, []);
 
     //Calendar Related.
     const localizer = luxonLocalizer(DateTime);

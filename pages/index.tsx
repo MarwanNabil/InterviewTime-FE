@@ -1,14 +1,11 @@
 import * as React from 'react';
-
-//Helpers
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 
 //Logo
 import Logo from "@public/images/logos-v4/logo-no-background.png"
 
 //UI
 import Image from 'next/image'
-import Button from '@mui/material/Button';
 import { Sidebar, Menu, MenuItem, SubMenu, useProSidebar, sidebarClasses } from 'react-pro-sidebar';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
@@ -17,6 +14,7 @@ import Stack from '@mui/material/Stack';
 
 
 //Single Pages
+import LoginPage from '@components/SinglePages/Login';
 import CalendarPage from '@components/SinglePages/Calendar';
 import Profile from '@components/SinglePages/Profile';
 
@@ -38,10 +36,31 @@ export default function LandingPage() {
     const logoW = Logo.width * factor;
     const logoH = Logo.height * factor;
 
+    //Hooks
+    const location = useLocation();
+    const [currentActivePath, setActiveCurrentPath] = React.useState(location.pathname);
+
+    React.useEffect(() => {
+
+        setActiveCurrentPath(location.pathname);
+
+    }, [location.pathname]);
+
+
+    //Sidebar
+    const buttonSideBarStyle: React.CSSProperties = {
+        backgroundColor: '#ffffff', border: "1px solid",
+        borderRadius: 4, borderColor: '#e2e1e4'
+    };
+
+    const notActiveIconButtonSideBarStyle: React.CSSProperties = { fontSize: 18, color: '#d7d7d7' };
+    const activeIconButtonSideBarStyle: React.CSSProperties = { fontSize: 18, color: '#447dc0' };
+
+
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
             <Sidebar backgroundColor='#fafcfe' defaultCollapsed rootStyles={{
-                [`.${sidebarClasses.container}`]: {},
+                [`.${sidebarClasses.container}`]: { backgroundColor: '#FAFCFE', border: "1px solid", borderRadius: 4, borderColor: '#e2e1e4', },
             }}
             >
                 <Menu>
@@ -49,39 +68,29 @@ export default function LandingPage() {
                         <Image src={Logo} width={logoW} height={logoH} />
                     </div>
 
-                    <MenuItem component={<Link to='/calendar' />}>
-                        <IconButton style={{
-                            backgroundColor: '#ffffff', border: "1px solid", borderRadius: 4, borderColor: '#e2e1e4',
-                        }}>
-                            <HomeIcon style={{ color: '#447dc0', fontSize: 18 }} />
+                    <MenuItem component={<Link to='/' />}>
+                        <IconButton style={buttonSideBarStyle}>
+                            <HomeIcon style={currentActivePath === '/' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
                         </IconButton>
                     </MenuItem>
                     <MenuItem component={<Link to='/calendar' />}>
-                        <IconButton style={{
-                            backgroundColor: '#ffffff', border: "1px solid", borderRadius: 4, borderColor: '#e2e1e4',
-                        }}>
-                            <CalendarMonthIcon style={{ color: '#447dc0', fontSize: 18 }} />
+                        <IconButton style={buttonSideBarStyle}>
+                            <CalendarMonthIcon style={currentActivePath === '/calendar' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
                         </IconButton>
                     </MenuItem>
                     <MenuItem component={<Link to='/profile' />}>
-                        <IconButton style={{
-                            backgroundColor: '#ffffff', border: "1px solid", borderRadius: 4, borderColor: '#e2e1e4',
-                        }}>
-                            <AccountBoxIcon style={{ fontSize: 18, color: '#d7d7d7' }} />
+                        <IconButton style={buttonSideBarStyle}>
+                            <AccountBoxIcon style={currentActivePath === '/profile' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
                         </IconButton>
                     </MenuItem>
-                    <MenuItem component={<Link to='/profile' />}>
-                        <IconButton style={{
-                            backgroundColor: '#ffffff', border: "1px solid", borderRadius: 4, borderColor: '#e2e1e4',
-                        }}>
-                            <SettingsIcon style={{ fontSize: 18, color: '#d7d7d7' }} />
+                    <MenuItem component={<Link to='/settings' />}>
+                        <IconButton style={buttonSideBarStyle}>
+                            <SettingsIcon style={currentActivePath === '/settings' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
                         </IconButton>
                     </MenuItem>
-                    <MenuItem component={<Link to='/profile' />}>
-                        <IconButton style={{
-                            backgroundColor: '#ffffff', border: "1px solid", borderRadius: 4, borderColor: '#e2e1e4',
-                        }}>
-                            <LogoutIcon style={{ fontSize: 18, color: '#d7d7d7' }} />
+                    <MenuItem component={<Link to='/logout' />}>
+                        <IconButton style={buttonSideBarStyle}>
+                            <LogoutIcon style={currentActivePath === '/logout' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
                         </IconButton>
                     </MenuItem>
                 </Menu>
@@ -152,6 +161,7 @@ export default function LandingPage() {
                     </div>
                 </div>
                 <Routes>
+                    <Route path='/' element={<LoginPage />} />
                     <Route path='/profile' element={<Profile />} />
                     <Route path='/calendar' element={<CalendarPage />} />
                 </Routes>

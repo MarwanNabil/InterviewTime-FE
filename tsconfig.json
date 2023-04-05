@@ -21,12 +21,10 @@
     ],
     "baseUrl": ".",
     "paths": {
-      // "redux/*": ["redux/*"],
+      "redux/*": ["redux/*"],
       "@components/*": ["components/*"],
       "@helpers/*": ["helpers/*"],
-      // "@contexts/*": ["contexts/*"],
       "@pages/*": ["pages/*"],
-      // "@helpers/*": ["helpers/*"],
       "@public/*": ["public/*"],
       "@images": ["public/images/*"]
     }

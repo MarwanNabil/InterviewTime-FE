@@ -43,57 +43,57 @@ interface InterviewTimeI {
 const dummyInterviewsTimes: Array<InterviewTimeI> = [
     {
         id: "0",
-        time: "09:00 AM",
-        status: "success",
+        time: "09:00AM",
+        status: "error",
     },
     {
         id: "1",
-        time: "10:00 AM",
+        time: "10:00AM",
         status: "error",
     },
     {
         id: "0",
-        time: "11:00 AM",
+        time: "11:00AM",
         status: "error",
     },
     {
         id: "0",
-        time: "12:00 AM",
+        time: "12:00AM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00 AM",
+        time: "12:00AM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00 AM",
+        time: "12:00AM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00 AM",
+        time: "12:00AM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00 AM",
+        time: "12:00AM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00 AM",
+        time: "12:00AM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00 AM",
+        time: "12:00AM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00 AM",
+        time: "12:00AM",
         status: "success",
     },
 ];

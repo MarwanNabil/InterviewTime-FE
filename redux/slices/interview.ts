@@ -39,9 +39,9 @@ type Dispath = ReturnType<typeof useDispatch>;
 function list() {
   return async (dispatch: Dispath) => {
     try {
-      const res = await interviewAPI.get("");
+      const res = await interviewAPI.get("", { withCredentials: true });
       const data = res.data;
-      console.log(data);
+
       dispatch(actions.list(data));
     } catch (err) {
       throw err;

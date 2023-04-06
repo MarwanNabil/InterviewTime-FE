@@ -141,7 +141,7 @@ export default function LandingPage() {
                                                 fontFamily: 'urbistan', color: 'white', fontWeight: 600,
                                                 backgroundColor: '#fbdb81', paddingBlock: 4, paddingInline: 6,
                                                 borderRadius: 10, border: 'solid', borderWidth: 'thin',
-                                                borderColor: '#ebbb3b', textShadow: '0px 0px 1px black'
+                                                borderColor: '#ebbb3b', textShadow: '0px 0px 8px black'
                                             }}>3</div>
                                         }
                                     >

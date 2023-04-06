@@ -61,12 +61,23 @@ type Dispath = ReturnType<typeof useDispatch>;
 function login(values: { email: string; password: string }) {
   return async (dispatch: Dispath) => {
     try {
-      const resp = await authAPI.post("login/", {
-        email: values.email,
-        password: values.password,
-      });
+      const res = await authAPI.post(
+        "login/",
+        {
+          email: values.email,
+          password: values.password,
+        },
+        { withCredentials: true }
+      );
 
-      const token = resp.data.token;
+      const token = res.data.token;
+
+      //Config
+      console.log(res.config);
+      console.log(res.request);
+      console.log(res.status);
+      console.log(res.statusText);
+
       localStorage.setItem("token", JSON.stringify(token));
       localStorage.setItem("is_authenticated", JSON.stringify(true));
 

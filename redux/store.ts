@@ -5,7 +5,8 @@ import { createWrapper, HYDRATE } from "next-redux-wrapper";
 import authReducer from "redux/slices/auth";
 import interviewReducer from "redux/slices/interview";
 
-const baseURL = "https://interviewtime-be-production-bebc.up.railway.app";
+// const baseURL = "https://interviewtime-be-production-bebc.up.railway.app";
+const baseURL = "http://localhost:8009";
 
 export const authAPI = axios.create({
   baseURL: baseURL + "/auth/",
@@ -18,7 +19,7 @@ export const interviewAPI = axios.create({
       typeof window !== "undefined" ? localStorage.getItem("token") : false
     }`,
     "Content-Type": "application/json",
-    Host: "interviewtime-be-production-bebc.up.railway.app",
+    Host: "localhost:8009",
     Accept: "*/*",
     Connection: "keep-alive",
     "Accept-Encoding": "gzip, deflate, br",

@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux'
 import wrapper from 'redux/index'
 
-
 //UI
 import InitState from '@components/init_state';
 import { ProSidebarProvider } from 'react-pro-sidebar';

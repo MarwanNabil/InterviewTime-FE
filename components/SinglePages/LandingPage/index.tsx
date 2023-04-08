@@ -27,7 +27,7 @@ import { useFormik } from 'formik'
 import { useDispatch } from 'react-redux'
 import { authActions } from 'redux/index';
 
-export default function LoginPage() {
+export default function LandingPage() {
   const dispatch = useDispatch()
 
   //formik

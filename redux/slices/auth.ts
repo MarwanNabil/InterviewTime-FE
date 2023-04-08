@@ -72,12 +72,6 @@ function login(values: { email: string; password: string }) {
 
       const token = res.data.token;
 
-      //Config
-      console.log(res.config);
-      console.log(res.request);
-      console.log(res.status);
-      console.log(res.statusText);
-
       localStorage.setItem("token", JSON.stringify(token));
       localStorage.setItem("is_authenticated", JSON.stringify(true));
 

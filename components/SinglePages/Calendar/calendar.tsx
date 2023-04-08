@@ -32,23 +32,29 @@ import { DateTime } from "luxon";
 import { Calendar, luxonLocalizer, momentLocalizer, Event, DateHeaderProps, DateCellWrapperProps } from "react-big-calendar";
 import moment from 'moment'
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { ToolbarProps, HeaderProps, EventProps, CalendarProps } from 'react-big-calendar';
+import { ToolbarProps, HeaderProps, EventProps } from 'react-big-calendar';
 const localizer = momentLocalizer(moment)
 
 
 //Helpers
-import { InterviewTypesArray, NA, dummyInterviewsTimes } from '@helpers/index';
+import { interviewUIArray, NA, dummyInterviewsTimes } from '@helpers/index';
 import { BorderLeftRounded } from '@mui/icons-material';
+import { IInterviewData, IInterviewUI } from '@helpers/Interview/index';
 
 //Store
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { interviewActions } from 'redux/index';
 import { useEffect } from 'react';
 
 
 
-export default function CalendarTool() {
 
+type CalendarProps = {
+    interviews: IInterviewData[],
+}
+
+export default function CalendarTool({ interviews }: CalendarProps) {
+    console.log(interviews);
     //Schedule Hook
     const [openSchedule, setOpenSchedule] = React.useState(false);
 
@@ -83,65 +89,63 @@ export default function CalendarTool() {
         setTimeIndex(key)
     }
 
-    //Events
-    const dispatch = useDispatch()
 
-    const trial = async () => {
-        await dispatch(interviewActions.list());
-    }
-
-    useEffect(() => {
-        trial();
-    }, []);
 
     //Calendar Related.
     const localizer = luxonLocalizer(DateTime);
 
-    const eventCalendarShape = (title: string, startDate: Date) => {
-        let brdColor = "#F02525";
-        let bgColor = "#FFB7B7";
-        if (title === "OOP") {
-            brdColor = '#F02525';
-            bgColor = '#FFB7B7';
-        } else if (title === 'PS') {
-            brdColor = '#F0B925'
-            bgColor = '#FFDD80';
-        } else if (title === 'DB') {
-            brdColor = '#50F025'
-            bgColor = '#B9FFA6';
-        }
+    const eventCalendarShape = (title: string, startDate: Date, bgColor: string, brdColor: string) => {
+
 
         return (
             <div style={{
                 display: 'flex', flexDirection: "row", alignItems: 'end', columnGap: 5,
                 borderLeftWidth: 4, borderLeft: 'solid', justifyContent: 'space-between', paddingInline: 4,
-                borderRadius: 2, backgroundColor: bgColor, borderLeftColor: brdColor,
+                borderRadius: 2, backgroundColor: bgColor, borderLeftColor: brdColor
             }
             }>
-                <div style={{ fontWeight: 'normal', fontFamily: 'monospace', fontSize: 13 }}> {title}</div >
-                <div style={{ color: '#A1A1A1', fontSize: 12 }}>{`${(startDate.getHours().toString().length === 1 ? '0' : '') + startDate.getHours()}:${(startDate.getMinutes().toString().length === 1 ? '0' : '') + startDate.getMinutes()} AM`}</div>
+                <div style={{
+                    fontWeight: 600, fontSize: 13
+                }}> {title}</div >
+                < div style={{ color: '#A1A1A1', fontSize: 12 }}>
+                    {`${(startDate.getHours().toString().length === 1 ? '0' : '') + startDate.getHours()}:${(startDate.getMinutes().toString().length === 1 ? '0' : '') + startDate.getMinutes()} AM`}
+                </div>
             </div >
         );
     };
 
-    const myEventsList: Event[] = [
-        {
-            title: eventCalendarShape("PS", new Date("2023-04-08T10:00")),
-            start: new Date("2023-04-08T10:00"),
-            end: new Date("2023-04-08T17:00"),
+    const myCalendarInterviews: Event[] = [
+        // {
+        //     title: eventCalendarShape("PS", new Date("2023-04-08T10:00")),
+        //     start: new Date("2023-04-08T10:00"),
+        //     end: new Date("2023-04-08T17:00"),
 
-        },
-        {
-            title: eventCalendarShape("OOP", new Date("2023-04-08T23:00")),
-            start: new Date("2023-04-08T23:00"),
-            end: new Date("2023-04-08T23:39")
-        },
-        {
-            title: eventCalendarShape("DB", new Date("2023-04-10T23:00")),
-            start: new Date("2023-04-10T23:00"),
-            end: new Date("2023-04-10T23:39")
-        },
+        // },
+        // {
+        //     title: eventCalendarShape("OOP", new Date("2023-04-08T23:00")),
+        //     start: new Date("2023-04-08T23:00"),
+        //     end: new Date("2023-04-08T23:39")
+        // },
+        // {
+        //     title: eventCalendarShape("DB", new Date("2023-04-10T23:00")),
+        //     start: new Date("2023-04-10T23:00"),
+        //     end: new Date("2023-04-10T23:39")
+        // },
     ];
+
+    interviews.forEach(interview => {
+        const eventDate = new Date(interview.startTime.toString());
+        const interviewTypeMetaData = interviewUIArray[interview.interviewType];
+
+        myCalendarInterviews.push({
+            title: eventCalendarShape(interviewTypeMetaData.code, eventDate,
+                interviewTypeMetaData.color.weak,
+                interviewTypeMetaData.color.solid),
+            start: eventDate,
+            end: eventDate,
+        });
+    })
+
     const toolbarHandler = (props: ToolbarProps<Event, object>) => {
         let navigateActions = {
             PREVIOUS: 'PREV',
@@ -203,7 +207,7 @@ export default function CalendarTool() {
 
             <Calendar
                 localizer={localizer}
-                events={myEventsList}
+                events={myCalendarInterviews}
                 startAccessor="start"
                 endAccessor="end"
                 style={{

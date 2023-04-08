@@ -1,29 +1,56 @@
+import * as React from 'react';
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 //redux actions
 import { authActions } from 'redux/slices/auth'
+import { interviewActions } from 'redux/slices/interview';
 
 //hooks
 import useLocalStorage from '@helpers/hooks/use-local-storage'
 
+//MUI
+import CircularProgress from '@mui/material/CircularProgress';
+
 export default function InitState({ children }: { children: JSX.Element }) {
     const dispatch = useDispatch()
-    const auth_storage = useLocalStorage('tokens', 'is_authenticated')
+    const [isLoading, isLoadingHandler] = React.useState(true);
+    const authStorage = useLocalStorage('tokens', 'is_authenticated')
+    const interviewStorage = useLocalStorage('interviewsLoadedDate', 'interviews', 'interviewsCount')
+
+
 
     //loading data for auth state
     useEffect(() => {
-        if (auth_storage.loading) return
+        if (authStorage.loading && interviewStorage.loading) return
+
         dispatch(
             authActions.loadInitialAuthState({
-                tokens: auth_storage.values.get('tokens') ?? {
+                tokens: authStorage.values.get('tokens') ?? {
                     refresh: '',
                     access: '',
                 },
-                is_authenticated: auth_storage.values.get('is_authenticated') ?? false,
+                is_authenticated: authStorage.values.get('is_authenticated') ?? false,
             })
         )
-    }, [auth_storage.loading, auth_storage.values, dispatch])
 
-    return auth_storage.loading ? <></> : children
+        const loadedDate: Date = new Date(interviewStorage.values.get('interviewsLoadedDate'));
+
+        dispatch(
+            interviewActions.load({
+                interviews: interviewStorage.values.get('interviews'),
+                interviewsCount: interviewStorage.values.get('interviewsCount'),
+                interviewsLoadedDate: loadedDate.toString()
+            })
+        )
+
+        isLoadingHandler(false);
+
+    }, [authStorage.loading, interviewStorage.loading, dispatch])
+
+    return isLoading ?
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+            <CircularProgress />
+        </div>
+        : children
 }

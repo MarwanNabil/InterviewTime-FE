@@ -1,20 +1,23 @@
+import useLocalStorage from "@helpers/hooks/use-local-storage";
 import { createSlice } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 import { useSelector, useDispatch } from "react-redux";
 
 import { interviewAPI } from "redux/index";
 
-const initialState = {
-  interviewsCounts: Number,
-  interviews: Array<{
-    id: string;
-    startTime: Date;
-    eventId: string;
-    interviewType: number;
-    interviewStatus: number;
-    hangoutLink: string;
-    attendees: Array<{ email: string; role: number }>;
-  }>,
+//Helpers
+import { IInterviewData } from "@helpers/Interview/index";
+
+interface IinterviewState {
+  interviewsLoadedDate: String;
+  interviewsCounts: Number;
+  interviews: IInterviewData[];
+}
+
+const initialState: IinterviewState = {
+  interviewsLoadedDate: "",
+  interviewsCounts: 0,
+  interviews: [],
 };
 
 type InterviewState = typeof initialState;
@@ -23,9 +26,10 @@ const interviewSlice = createSlice({
   name: "interview",
   initialState,
   reducers: {
-    list(state, action) {
-      state.interviewsCounts = action.payload.interviewsCount;
-      state.interviews = action.payload.interviews;
+    load(state, action) {
+      state.interviewsCounts += action.payload.interviewsCount;
+      state.interviews = [...state.interviews, action.payload.interviews];
+      state.interviewsLoadedDate = action.payload.interviewsLoadedDate;
     },
     post(state, action) {},
     delete(state, action) {},
@@ -39,10 +43,35 @@ type Dispath = ReturnType<typeof useDispatch>;
 function list() {
   return async (dispatch: Dispath) => {
     try {
-      const res = await interviewAPI.get("", { withCredentials: true });
+      const res = await interviewAPI.get("");
       const data = res.data;
+      const currentDate = new Date();
 
-      dispatch(actions.list(data));
+      dispatch(actions.load(data));
+
+      localStorage.setItem(
+        "interviewsCount",
+        JSON.stringify(data.interviewsCount)
+      );
+      localStorage.setItem("interviews", JSON.stringify(data.interviews));
+      localStorage.setItem(
+        "interviewsLoadedDate",
+        JSON.stringify(currentDate.getTime())
+      );
+    } catch (err) {
+      throw err;
+    }
+  };
+}
+
+function scheduleInterview(values: { startDate: Date; interviewType: Number }) {
+  return async (dispatch: Dispath) => {
+    try {
+      const res = await interviewAPI.post("", {
+        start: values.startDate.toISOString(),
+        interviewType: values.interviewType,
+      });
+      const data = res.data;
     } catch (err) {
       throw err;
     }
@@ -51,6 +80,8 @@ function list() {
 
 export const interviewActions = {
   list,
+  load: actions.load,
+  post: scheduleInterview,
 };
 
 export default interviewSlice.reducer;

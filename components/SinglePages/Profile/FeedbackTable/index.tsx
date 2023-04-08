@@ -18,6 +18,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 
 //Helpers
 import { DB, NA, PS, Architecture, HR, InterviewFeedbackI, ReactionE, getReactionComponent } from '@helpers/index';
+import Stack from '@mui/material/Stack';
 
 function createData(data: InterviewFeedbackI) {
     return data;
@@ -49,7 +50,7 @@ function Row(props: { row: ReturnType<typeof createData> }) {
 
     return (
         <React.Fragment>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <TableRow sx={{ '& > *': { borderBottom: 'unset', backgroundColor: '#f5f5f5' } }}>
                 <TableCell>
                     <IconButton
                         aria-label="expand row"
@@ -68,7 +69,7 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                 <TableCell align="right">{getReactionComponent(row.overallRating)}</TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#f5f5f5' }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
                             <Typography variant="body1" gutterBottom component="div">
@@ -125,7 +126,12 @@ export default function FeedbackTable() {
     };
 
     return (
-        <Box sx={{ backgroundColor: '#E6EBF0', height: 'auto', paddingTop: 5, paddingBottom: 20, paddingX: 2 }}>
+        <Stack sx={{
+            maxWidth: 1500,
+            display: "flex", flexDirection: 'column', alignItems: 'center',
+            paddingTop: 5, paddingBottom: 20, paddingX: 2,
+
+        }}>
             <TableContainer component={Paper}>
                 <Table aria-label="collapsible table">
                     <TableHead>
@@ -156,6 +162,6 @@ export default function FeedbackTable() {
                 </Table>
             </TableContainer>
 
-        </Box >
+        </Stack >
     );
 }

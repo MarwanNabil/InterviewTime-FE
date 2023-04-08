@@ -26,6 +26,7 @@ export const interviewAPI = axios.create({
     "Accept-Encoding": "gzip, deflate, br",
   },
   timeout: 10_000,
+  withCredentials: true,
 });
 
 export const feedbackAPI = axios.create({

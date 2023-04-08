@@ -1,33 +1,96 @@
 import { ReactionE, getReactionComponent } from "./Feedback/FeedbackRating";
 
-export interface InterviewTypeI {
-    code: string;
-    name: string;
+export enum interviewTypeE {
+    NA,
+    DB,
+    OOD,
+    PS,
+    HR,
+    Architecture,
 }
 
-const NA: InterviewTypeI = { name: "None", code: "NA" };
-const DB: InterviewTypeI = { name: "Database Design", code: "DB" };
-const OOD: InterviewTypeI = { name: "Low Level System Design", code: "OOD" };
-const PS: InterviewTypeI = { name: "Problem Solving", code: "PS" };
-const HR: InterviewTypeI = { name: "Behavioral", code: "HR" };
-const Architecture: InterviewTypeI = {
+export enum interviewStatusE {
+    waiting,
+    removed,
+    completed,
+}
+
+export interface IInterviewUI {
+    code: string;
+    name: string;
+    color: {
+        solid: string,
+        weak: string
+    }
+}
+
+export interface IInterviewData {
+    eventId: String;
+    hangoutLink: String;
+    interviewStatus: interviewStatusE;
+    interviewType: interviewTypeE;
+    startTime: String;
+    timeZone: String;
+    attendees: [{ email: String, role: Number }]
+}
+
+const NA: IInterviewUI = {
+    name: "None", code: "NA", color: {
+        solid: '#9C9C9C',
+        weak: '#C3C3C3'
+    }
+};
+
+const DB: IInterviewUI = {
+    name: "Database Design", code: "DB", color: {
+        solid: '#0064FF',
+        weak: '#C6DCFF'
+    }
+};
+
+const OOD: IInterviewUI = {
+    name: "Low Level System Design", code: "OOD", color: {
+        solid: '#5100FE',
+        weak: '#DFCFFF'
+    }
+};
+
+const PS: IInterviewUI = {
+    name: "Problem Solving", code: "PS", color: {
+        solid: '#00A616',
+        weak: '#ACFFB7'
+    }
+};
+
+const HR: IInterviewUI = {
+    name: "Behavioral", code: "HR", color: {
+        solid: '#C700C4',
+        weak: '#FFD3FE'
+    }
+};
+
+const Architecture: IInterviewUI = {
     name: "High Level System Design",
     code: "Architecture",
+    color: {
+        solid: '#FF0000',
+        weak: '#FFD4D4'
+    }
 };
 
 
-const InterviewTypesArray: Array<InterviewTypeI> = [];
-InterviewTypesArray.push(NA);
-InterviewTypesArray.push(DB);
-InterviewTypesArray.push(OOD);
-InterviewTypesArray.push(PS);
-InterviewTypesArray.push(HR);
-InterviewTypesArray.push(Architecture);
+const interviewUIArray: Array<IInterviewUI> = [];
+interviewUIArray.push(NA);
+interviewUIArray.push(DB);
+interviewUIArray.push(OOD);
+interviewUIArray.push(PS);
+interviewUIArray.push(HR);
+interviewUIArray.push(Architecture);
 
 export interface InterviewFeedbackI {
     id: string;
     date: Date;
-    interviewType: InterviewTypeI;
+    interviewType: IInterviewUI;
     feedbackTitle: string;
     detailedFeedback: string;
     overallRating: ReactionE;
@@ -48,56 +111,42 @@ const dummyInterviewsTimes: Array<InterviewTimeI> = [
     },
     {
         id: "1",
-        time: "10:00AM",
-        status: "error",
-    },
-    {
-        id: "0",
         time: "11:00AM",
         status: "error",
     },
     {
         id: "0",
-        time: "12:00AM",
+        time: "01:00PM",
+        status: "error",
+    },
+    {
+        id: "0",
+        time: "03:00PM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00AM",
+        time: "05:00PM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00AM",
+        time: "07:00PM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00AM",
+        time: "09:00PM",
         status: "success",
     },
     {
         id: "0",
-        time: "12:00AM",
+        time: "11:00PM",
         status: "success",
     },
-    {
-        id: "0",
-        time: "12:00AM",
-        status: "success",
-    },
-    {
-        id: "0",
-        time: "12:00AM",
-        status: "success",
-    },
-    {
-        id: "0",
-        time: "12:00AM",
-        status: "success",
-    },
+
 ];
 
 export {
-    NA, DB, OOD, PS, HR, Architecture, InterviewTypesArray, ReactionE, getReactionComponent, dummyInterviewsTimes,
+    NA, DB, OOD, PS, HR, Architecture, interviewUIArray, ReactionE, getReactionComponent, dummyInterviewsTimes,
 };

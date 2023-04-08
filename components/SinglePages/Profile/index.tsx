@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 //Components
 import FeedbackTable from "./FeedbackTable"
 import ProfileTab from "./ProfileTab"
+import { Container } from '@mui/system';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -50,22 +51,26 @@ export default function BasicTabs() {
     };
 
     return (
-        <div>
-            <Box sx={{ width: '100%', minHeight: 300 }}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box style={{ backgroundColor: "#f5f5f5", paddingBlock: 50, display: 'flex', flexDirection: "column", rowGap: 30 }}>
+            <div style={{ paddingInline: 40 }}>
+                <ProfileTab />
+            </div>
+            <div style={{ backgroundColor: "white" }}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: "white" }}>
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                        <Tab label="Profile" {...a11yProps(0)} />
-                        <Tab label="Friends" {...a11yProps(1)} />
+                        <Tab label="History" {...a11yProps(0)} />
+                        <Tab label="Feedback" {...a11yProps(1)} />
                     </Tabs>
                 </Box>
-                <TabPanel value={value} index={0}>
-                    <ProfileTab />
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    {/* To Be Discussed Later */}
-                </TabPanel>
-            </Box>
-            <FeedbackTable />
-        </div>
+                <Container maxWidth="xl">
+                    <TabPanel value={value} index={0}>
+                        <FeedbackTable />
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        <FeedbackTable />
+                    </TabPanel>
+                </Container>
+            </div>
+        </Box >
     );
 }

@@ -39,7 +39,7 @@ export const interviewAPI = axios.create({
     Authorization: `Bearer ${
       typeof window !== "undefined" && localStorage.getItem("auth")
         ? JSON.parse(localStorage.getItem("auth")!).token
-        : false
+        : ""
     }`,
     "Content-Type": "application/json",
     Host: currentRoute.host,
@@ -57,7 +57,7 @@ export const feedbackAPI = axios.create({
     Authorization: `Bearer ${
       typeof window !== "undefined" && localStorage.getItem("auth")
         ? JSON.parse(localStorage.getItem("auth")!).token
-        : false
+        : ""
     }`,
     "Content-Type": "application/json",
     Host: currentRoute.host,
@@ -75,7 +75,7 @@ export const userAPI = axios.create({
     Authorization: `Bearer ${
       typeof window !== "undefined" && localStorage.getItem("auth")
         ? JSON.parse(localStorage.getItem("auth")!).token
-        : false
+        : ""
     }`,
     "Content-Type": "application/json",
     Host: currentRoute.host,

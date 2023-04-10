@@ -37,7 +37,9 @@ export const interviewAPI = axios.create({
   baseURL: currentRoute.fullUrl + "/interview/",
   headers: {
     Authorization: `Bearer ${
-      typeof window !== "undefined" ? localStorage.getItem("token") : false
+      typeof window !== "undefined" && localStorage.getItem("auth")
+        ? JSON.parse(localStorage.getItem("auth")!).token
+        : false
     }`,
     "Content-Type": "application/json",
     Host: currentRoute.host,
@@ -53,7 +55,9 @@ export const feedbackAPI = axios.create({
   baseURL: currentRoute.fullUrl + "/feedback/",
   headers: {
     Authorization: `Bearer ${
-      typeof window !== "undefined" ? localStorage.getItem("token") : false
+      typeof window !== "undefined" && localStorage.getItem("auth")
+        ? JSON.parse(localStorage.getItem("auth")!).token
+        : false
     }`,
     "Content-Type": "application/json",
     Host: currentRoute.host,
@@ -69,7 +73,9 @@ export const userAPI = axios.create({
   baseURL: currentRoute.fullUrl + "/user/",
   headers: {
     Authorization: `Bearer ${
-      typeof window !== "undefined" ? localStorage.getItem("token") : false
+      typeof window !== "undefined" && localStorage.getItem("auth")
+        ? JSON.parse(localStorage.getItem("auth")!).token
+        : false
     }`,
     "Content-Type": "application/json",
     Host: currentRoute.host,

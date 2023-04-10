@@ -12,6 +12,15 @@ export enum ReactionE {
     VerySatisfied,
 }
 
+export enum feedbackStatusE {
+    /*
+     * none means unseen
+     */
+    none,
+    accepted,
+    rejected,
+}
+
 export const getReactionComponent = (reactionType: ReactionE) => {
     switch (reactionType) {
         case ReactionE.VeryDissatisfied:

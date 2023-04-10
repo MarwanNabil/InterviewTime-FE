@@ -15,33 +15,18 @@ export default function InitState({ children }: { children: JSX.Element }) {
     const dispatch = useDispatch()
     const [isLoading, isLoadingHandler] = React.useState(true);
 
-    const authStorage = useLocalStorage('tokens', 'is_authenticated')
-    const interviewStorage = useLocalStorage('interviewsLoadedDate', 'interviews', 'interviewsCount')
+    const authStorage = useLocalStorage('auth')
     const userStorage = useLocalStorage('user');
-
-
+    const interviewStorage = useLocalStorage('interview')
 
     //loading data for auth state
     useEffect(() => {
-        if (authStorage.loading && interviewStorage.loading) return
+        if (authStorage.loading && interviewStorage.loading && userStorage.loading) return
 
         dispatch(
-            authActions.loadInitialAuthState({
-                tokens: authStorage.values.get('tokens') ?? {
-                    refresh: '',
-                    access: '',
-                },
-                is_authenticated: authStorage.values.get('is_authenticated') ?? false,
-            })
-        )
-
-        const loadedDate: Date = new Date(interviewStorage.values.get('interviewsLoadedDate'));
-
-        dispatch(
-            interviewActions.load({
-                interviews: interviewStorage.values.get('interviews'),
-                interviewsCount: interviewStorage.values.get('interviewsCount'),
-                interviewsLoadedDate: loadedDate.toString()
+            authActions.loadInitialAuthState(authStorage.values.get('auth') ?? {
+                token: "",
+                isAuthenticated: false,
             })
         )
 
@@ -53,13 +38,25 @@ export default function InitState({ children }: { children: JSX.Element }) {
             username: ""
         }))
 
+        dispatch(
+            interviewActions.load(userStorage.values.get('interview') ?? {
+                interviews: [],
+                interviewsCount: 0,
+                interviewsLoadedDate: 0
+            })
+        )
+
+
         isLoadingHandler(false);
 
-    }, [authStorage.loading, interviewStorage.loading, dispatch])
+    }, [authStorage.loading, interviewStorage.loading, userStorage.loading, dispatch])
 
-    return isLoading ?
+    return (isLoading ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
             <CircularProgress />
-        </div>
-        : children
+
+        </div>)
+        : (
+            children
+        ))
 }

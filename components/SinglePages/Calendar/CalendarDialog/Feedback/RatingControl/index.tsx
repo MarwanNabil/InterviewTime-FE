@@ -55,13 +55,14 @@ export default function FeedbackRatingControl({ activeRate, setActiveRateHandler
     return (
         <StyledRating
             name="highlight-selected-only"
-            defaultValue={activeRate}
+            defaultValue={activeRate ?? 4}
             IconContainerComponent={IconContainer}
             getLabelText={(value: number) => {
-                setActiveRateHandler(value);
-                return value.toString();
+                setActiveRateHandler(value ?? 4);
+                return value.toString() ?? 4;
             }}
             highlightSelectedOnly
+
         />
     );
 }

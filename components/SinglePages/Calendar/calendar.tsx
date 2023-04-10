@@ -57,52 +57,26 @@ type CalendarProps = {
 }
 
 export default function CalendarTool({ interviews, setCurrentSelectedInterviewIndex: setCurrentSelectedIntervieIndex, setOpenDialog, setOpenInterview }: CalendarProps) {
-    //Schedule Hook
-    const [openSchedule, setOpenSchedule] = React.useState(false);
-
-    const scheduleOpen = () => {
-        setOpenSchedule(true);
-    };
-
-    const scheduleClose = () => {
-        setOpenSchedule(false);
-    };
-
-    //Diaglog Related
-    const defaultNoneForInterviewCode = NA.code;
-    const [interviewTypeCode, setInterviewTypeCode] = React.useState(NA.code);
-
-    const InterviewTypeChangeHandler = (event: SelectChangeEvent) => {
-        setInterviewTypeCode(event.target.value);
-    };
-
-    //Interviews Dates
-    const [interviewDateValue, setInterviewDateValue] = React.useState('7/3');
-
-    const interviewDateHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setInterviewDateValue((event.target as HTMLInputElement).value);
-    };
-
-
-    //Time Suggestions
-    const [timeIndex, setTimeIndex] = React.useState(-1);
-
-    const onTimeClickHandler = (event: React.MouseEvent, key: number) => {
-        setTimeIndex(key)
-    }
 
     //Calendar Related.
     const localizer = luxonLocalizer(DateTime);
 
-    const eventCalendarShape = (interviewId: string, title: string, startDate: Date, bgColor: string, brdColor: string, interviewStatus: interviewStatusE) => {
+    const eventCalendarShape = (interviewId: string, title: string, startDate: Date, bgColor: string, brdColor: string, interviewStatus: interviewStatusE, interviewIndex: number) => {
         return (
-            <div style={{
+            <div key={interviewId} style={{
                 display: 'flex', flexDirection: "row", alignItems: 'end', columnGap: 5,
                 borderLeftWidth: 4, borderLeft: 'solid', justifyContent: 'space-between', paddingInline: 4,
                 borderRadius: 2, backgroundColor: bgColor, borderLeftColor: brdColor
                 , opacity: interviewStatus === interviewStatusE.waiting ? '0.5' : '1'
             }
-            }>
+            }
+                onClick={() => {
+                    setOpenDialog(() => {
+                        setCurrentSelectedIntervieIndex(interviewIndex);
+                        return true;
+                    });
+                }}
+            >
                 <div key={interviewId} style={{
                     fontWeight: 600, fontSize: 13
                 }}> {title}</div >
@@ -134,12 +108,13 @@ export default function CalendarTool({ interviews, setCurrentSelectedInterviewIn
                 interviewTypeMetaData.code, eventStartDateInYourTimeZone,
                 interviewTypeMetaData.color.weak,
                 interviewTypeMetaData.color.solid,
-                interview.interviewStatus),
+                interview.interviewStatus,
+                interviewIndex),
             start: eventStartDateInYourTimeZone,
             end: eventEndDateInYourTimeZone,
             resource: interviewIndex
         });
-    })
+    });
 
     const toolbarHandler = (props: ToolbarProps<Event, object>) => {
         let navigateActions = {
@@ -278,10 +253,7 @@ export default function CalendarTool({ interviews, setCurrentSelectedInterviewIn
                             paddingBlock: 1,
                             paddingInline: 1
                         }
-                        setCurrentSelectedIntervieIndex(event.resource);
-                        setOpenDialog(true);
                     }
-
                     return {
                         className: "",
                         style: newStyle

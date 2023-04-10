@@ -1,4 +1,4 @@
-import { ReactionE, getReactionComponent } from "./Feedback/FeedbackRating";
+import { ReactionE, getReactionComponent, feedbackStatusE } from "./Feedback/FeedbackRating";
 
 export enum interviewTypeE {
     NA,
@@ -88,12 +88,14 @@ interviewUIArray.push(HR);
 interviewUIArray.push(Architecture);
 
 export interface InterviewFeedbackI {
-    id: string;
-    date: Date;
-    interviewType: IInterviewUI;
-    feedbackTitle: string;
-    detailedFeedback: string;
-    overallRating: ReactionE;
+    _id: string;
+    startTime: Date;
+    interviewType: interviewTypeE;
+    title: string;
+    details: string;
+    overallScore: ReactionE;
+    targetUsername: string;
+    status: feedbackStatusE;
 }
 
 
@@ -148,5 +150,7 @@ const dummyInterviewsTimes: Array<InterviewTimeI> = [
 ];
 
 export {
-    NA, DB, OOD, PS, HR, Architecture, interviewUIArray, ReactionE, getReactionComponent, dummyInterviewsTimes,
+    NA, DB, OOD, PS, HR, Architecture,
+    interviewUIArray, feedbackStatusE, ReactionE, getReactionComponent,
+    dummyInterviewsTimes,
 };

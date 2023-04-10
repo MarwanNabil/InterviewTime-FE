@@ -76,9 +76,6 @@ const Info = ({ interview }: InfoPropsType) => {
         interviewDateUTCFormat.getHours() + ":00"
         ;
 
-    //Routing
-    const router = useRouter();
-
 
     return (
         <Grid container className={classes.grid}>
@@ -127,7 +124,7 @@ const Info = ({ interview }: InfoPropsType) => {
             </Grid>
             <Grid item xs={6}>
                 <div className={`${classes.cell} ${classes.people}`}>{
-                    interview.attendees.map(person => <div style={{
+                    interview.attendees.map((person, index) => <div key={person.email.toString()} style={{
                         paddingBlock: 2, paddingInline: 10,
                         backgroundColor: "#0085EE", color: 'white',
                         borderRadius: 15, fontWeight: 600

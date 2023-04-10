@@ -25,7 +25,7 @@ import { useFormik } from 'formik'
 
 //Store
 import { useDispatch } from 'react-redux'
-import { authActions, userActions } from 'redux/index';
+import { authActions, feedbackActions, userActions } from 'redux/index';
 
 export default function LandingPage() {
   const dispatch = useDispatch()

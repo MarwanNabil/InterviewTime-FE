@@ -1,12 +1,10 @@
 import * as React from 'react';
 
 //UI
-import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
@@ -14,13 +12,11 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Container } from '@mui/system';
 import Box from '@mui/material/Box';
-import { Grid, Paper } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 
 
 
 //Helpers
-import { IInterviewData, interviewUIArray } from '@helpers/Interview';
+import { IInterviewData, interviewStatusE, interviewUIArray } from '@helpers/Interview';
 import Info from './Info';
 import FeedbackEntry from './Feedback';
 
@@ -44,7 +40,7 @@ function TabPanel(props: TabPanelProps) {
         >
             {value === index && (
                 <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
+                    <Typography component={'span'}>{children}</Typography>
                 </Box>
             )}
         </div>
@@ -107,7 +103,8 @@ type CalendarDialogProps = {
 const CalendarDialog = ({ interview, openDialog, setOpenDialog }: CalendarDialogProps) => {
 
     const handleClose = () => {
-        setOpenDialog((prev) => !prev);
+        setOpenDialog(false);
+        console.log(openDialog);
     };
 
     const [value, setValue] = React.useState(0);
@@ -120,41 +117,38 @@ const CalendarDialog = ({ interview, openDialog, setOpenDialog }: CalendarDialog
     return (
         <div>
             <BootstrapDialog
-                onClose={handleClose}
+                onClose={() => handleClose()}
                 aria-labelledby="customized-dialog-title"
                 fullWidth={true}
                 maxWidth="sm"
                 open={openDialog}
             >
-                <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
+                <BootstrapDialogTitle id="customized-dialog-title" onClose={() => handleClose()}>
                     {`Interview Details`}
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
 
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                         <Tab label="Info" {...a11yProps(0)} />
-                        <Tab label="Feedback" {...a11yProps(1)} />
+                        {interview.interviewStatus === interviewStatusE.completed
+                            ?
+                            <Tab label="Feedback" {...a11yProps(1)} />
+                            :
+                            <></>}
                     </Tabs>
                     <Container maxWidth="sm">
                         <TabPanel value={value} index={0}>
                             <Info interview={interview} />
                         </TabPanel>
                         <TabPanel value={value} index={1}>
-                            <FeedbackEntry interview={interview} />
+                            {interview.interviewStatus === interviewStatusE.completed
+                                ?
+                                <FeedbackEntry interview={interview} />
+                                :
+                                <></>}
                         </TabPanel>
                     </Container>
                 </DialogContent>
-                {/* <DialogActions>
-                    <Button color='secondary' onClick={handleClose}>
-                        Close
-                    </Button>
-                    {/* Show Send Button With Feedback tab which has index 1 */}
-                {/* {value === 1 &&
-                        <Button color='error' onClick={handleClose}>
-                            Send
-                        </Button>
-                    }
-                </DialogActions>  */}
             </BootstrapDialog>
         </div>
     );

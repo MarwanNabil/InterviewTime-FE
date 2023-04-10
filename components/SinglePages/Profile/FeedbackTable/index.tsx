@@ -1,4 +1,13 @@
 import * as React from 'react';
+
+//Hooks
+import { useEffect } from "react";
+
+//Store
+import { feedbackActions } from 'redux/index';
+import { useDispatch, useSelector } from 'react-redux'
+
+//UI
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -16,33 +25,18 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
+//IconContainerProps
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DangerousIcon from '@mui/icons-material/Dangerous';
+
 //Helpers
-import { DB, NA, PS, Architecture, HR, InterviewFeedbackI, ReactionE, getReactionComponent } from '@helpers/index';
+import { DB, NA, PS, Architecture, HR, InterviewFeedbackI, ReactionE, getReactionComponent, feedbackStatusE, interviewUIArray } from '@helpers/index';
 import Stack from '@mui/material/Stack';
 
 function createData(data: InterviewFeedbackI) {
     return data;
 }
 
-const dumbFeedbackData: Array<InterviewFeedbackI> = [];
-dumbFeedbackData.push({ id: '0', date: new Date(), feedbackTitle: 'The best one.', interviewType: DB, overallRating: ReactionE.Neutral, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '1', date: new Date(), feedbackTitle: 'The best one.', interviewType: PS, overallRating: ReactionE.Satisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '2', date: new Date(), feedbackTitle: 'The best one.', interviewType: HR, overallRating: ReactionE.VeryDissatisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '3', date: new Date(), feedbackTitle: 'The best one.', interviewType: NA, overallRating: ReactionE.VerySatisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '5', date: new Date(), feedbackTitle: 'The best one.', interviewType: DB, overallRating: ReactionE.Satisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '6', date: new Date(), feedbackTitle: 'The best one.', interviewType: Architecture, overallRating: ReactionE.Neutral, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '7', date: new Date(), feedbackTitle: 'The best one.', interviewType: NA, overallRating: ReactionE.VerySatisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '8', date: new Date(), feedbackTitle: 'The best one.', interviewType: DB, overallRating: ReactionE.Satisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '9', date: new Date(), feedbackTitle: 'The best one.', interviewType: Architecture, overallRating: ReactionE.Neutral, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '10', date: new Date(), feedbackTitle: 'The best one.', interviewType: NA, overallRating: ReactionE.VerySatisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '11', date: new Date(), feedbackTitle: 'The best one.', interviewType: DB, overallRating: ReactionE.Satisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '12', date: new Date(), feedbackTitle: 'The best one.', interviewType: Architecture, overallRating: ReactionE.Neutral, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '13', date: new Date(), feedbackTitle: 'The best one.', interviewType: NA, overallRating: ReactionE.VerySatisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '14', date: new Date(), feedbackTitle: 'The best one.', interviewType: DB, overallRating: ReactionE.Satisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '15', date: new Date(), feedbackTitle: 'The best one.', interviewType: Architecture, overallRating: ReactionE.Neutral, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '16', date: new Date(), feedbackTitle: 'The best one.', interviewType: NA, overallRating: ReactionE.VerySatisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '17', date: new Date(), feedbackTitle: 'The best one.', interviewType: DB, overallRating: ReactionE.Satisfied, detailedFeedback: 'need to improve his accent a little bit.' })
-dumbFeedbackData.push({ id: '18', date: new Date(), feedbackTitle: 'The best one.', interviewType: Architecture, overallRating: ReactionE.Neutral, detailedFeedback: 'need to improve his accent a little bit.' })
 
 function Row(props: { row: ReturnType<typeof createData> }) {
     const { row } = props;
@@ -61,18 +55,18 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                    {row.date.toLocaleDateString()}
+                    {row.startTime.toLocaleDateString()}
                 </TableCell>
-                <TableCell align="left">{row.interviewType.name}</TableCell>
-                <TableCell align="left">{row.feedbackTitle}</TableCell>
+                <TableCell align="left">{interviewUIArray[row.interviewType].name}</TableCell>
+                <TableCell align="left">{row.title}</TableCell>
                 <TableCell align="center"></TableCell>
-                <TableCell align="right">{getReactionComponent(row.overallRating)}</TableCell>
+                <TableCell align="right">{getReactionComponent(row.overallScore)}</TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#f5f5f5' }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
-                            <Typography variant="body1" gutterBottom component="div">
+                            <Typography component={'span'} variant="body1" gutterBottom>
                                 {/* Details */}
                             </Typography>
                             <Table size="small" aria-label="purchases">
@@ -85,19 +79,24 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                                 </TableHead>
                                 <TableBody>
 
-                                    <TableRow key={row.id}>
+                                    <TableRow key={row._id}>
                                         <TableCell align="left">{'Link'}</TableCell>
-                                        <TableCell align="left">{row.detailedFeedback}</TableCell>
+                                        <TableCell align="left">{row.details}</TableCell>
                                         <TableCell align="center">
-                                            <ButtonGroup
-                                                disableElevation
-                                                variant="contained"
-                                                aria-label="Disabled elevation buttons"
+                                            {(row.status === feedbackStatusE.none) ? (
+                                                <ButtonGroup
+                                                    disableElevation
+                                                    variant="contained"
+                                                    aria-label="Disabled elevation buttons"
 
-                                            >
-                                                <Button color='success'>Accept</Button>
-                                                <Button color='error'>Reject</Button>
-                                            </ButtonGroup>
+                                                >
+                                                    <Button color='success'>Accept</Button>
+                                                    <Button color='error'>Reject</Button>
+                                                </ButtonGroup>
+                                            ) : (<div style={row.status === feedbackStatusE.accepted ? { color: '#07C82A' } : { color: '#DE3005' }}>
+                                                {row.status === feedbackStatusE.accepted ? <CheckCircleIcon /> : <DangerousIcon />}
+                                            </div>
+                                            )}
                                         </TableCell>
                                     </TableRow>
 
@@ -125,6 +124,44 @@ export default function FeedbackTable() {
         setPage(0);
     };
 
+    //Feedback array UI for row
+    const [feedbackDataForUI, setFeedbackDataForUI] = React.useState<Array<InterviewFeedbackI>>([]);
+
+
+    //Loading Feedback
+    const dispatch = useDispatch();
+    const feedbacks = useSelector((state: any) => state.feedback);
+
+    useEffect(() => {
+        const loadFeedbacks = async () => {
+            await dispatch(feedbackActions.requestMyFeedbacks());
+        }
+
+        loadFeedbacks();
+
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (feedbacks && feedbacks.feedbacksCount > 0) {
+            const bufferFeedbackData: Array<InterviewFeedbackI> = [];
+            feedbacks.feedbacks.forEach((element: InterviewFeedbackI, index: number) => {
+                bufferFeedbackData.push({
+                    _id: element._id,
+                    startTime: new Date(element.startTime),
+                    details: element.details,
+                    title: element.title,
+                    interviewType: element.interviewType,
+                    overallScore: element.overallScore,
+                    status: element.status,
+                    targetUsername: element.targetUsername
+                })
+            });
+            setFeedbackDataForUI(bufferFeedbackData);
+        }
+
+    }, [feedbacks]);
+
+
     return (
         <Stack sx={{
             maxWidth: 1500,
@@ -147,13 +184,13 @@ export default function FeedbackTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {dumbFeedbackData.filter((row, i) => (rowsPerPage * page <= i && i < rowsPerPage * (page + 1))).map((row) => (
-                            <Row key={row.id} row={row} />
+                        {feedbackDataForUI.filter((row, i) => (rowsPerPage * page <= i && i < rowsPerPage * (page + 1))).map((row) => (
+                            <Row key={row._id} row={row} />
                         ))}
                     </TableBody>
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
-                        count={dumbFeedbackData.length}
+                        count={feedbackDataForUI.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}

@@ -5,21 +5,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { authAPI } from "redux/index";
 
 type TauthState = {
-  token: {
-    access: string;
-    refresh: string;
-  };
+  token: string;
   isAuthenticated: boolean;
-  isLoadingAuthData: boolean;
+  isLoadingData: boolean;
 };
 
 const initialState: TauthState = {
-  token: {
-    access: "",
-    refresh: "",
-  },
+  token: "",
   isAuthenticated: false,
-  isLoadingAuthData: true,
+  isLoadingData: false,
 };
 
 type AuthState = typeof initialState;
@@ -37,10 +31,7 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
     },
     logout(state) {
-      state.token = {
-        access: "",
-        refresh: "",
-      };
+      state.token = "";
       state.isAuthenticated = false;
     },
     loadInitialAuthState(state, action) {
@@ -77,13 +68,19 @@ function login(values: { email: string; password: string }) {
       );
 
       const token = res.data.token;
+      const isAuthenticated = true;
 
-      localStorage.setItem("token", JSON.stringify(token));
-      localStorage.setItem("isAuthenticated", JSON.stringify(true));
+      localStorage.setItem(
+        "auth",
+        JSON.stringify({
+          token,
+          isAuthenticated,
+        })
+      );
 
       dispatch(
         actions.login({
-          token: { access: token, refresh: "" },
+          token,
           redirect_to: "/calendar",
         })
       );

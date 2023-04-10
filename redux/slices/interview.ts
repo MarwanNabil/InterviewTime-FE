@@ -27,7 +27,7 @@ const interviewSlice = createSlice({
     load(state, action) {
       state.interviewsCounts += action.payload.interviewsCount;
       state.interviews = [...state.interviews, action.payload.interviews];
-      state.interviewsLoadedDate = action.payload.interviewsLoadedDate;
+      state.interviewsLoadedDate += action.payload.interviewsLoadedDate;
     },
     post(state, action) {},
     delete(state, action) {},
@@ -43,19 +43,13 @@ function list() {
     try {
       const res = await interviewAPI.get("");
       const data = res.data;
-      const currentDate = new Date();
+      const loadedDate = new Date().getTime();
 
-      dispatch(actions.load(data));
+      const finalObj = { ...data, interviewsLoadedDate: loadedDate };
 
-      localStorage.setItem(
-        "interviewsCount",
-        JSON.stringify(data.interviewsCount)
-      );
-      localStorage.setItem("interviews", JSON.stringify(data.interviews));
-      localStorage.setItem(
-        "interviewsLoadedDate",
-        JSON.stringify(currentDate.getTime())
-      );
+      dispatch(actions.load(finalObj));
+
+      localStorage.setItem("interview", JSON.stringify(finalObj));
     } catch (err) {
       throw err;
     }

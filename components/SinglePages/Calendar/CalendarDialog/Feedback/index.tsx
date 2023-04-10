@@ -12,7 +12,7 @@ import { useFormik } from 'formik'
 
 //Store
 import { useDispatch } from 'react-redux'
-import { authActions, userActions } from 'redux/index';
+import { feedbackActions, userActions } from 'redux/index';
 
 //Helpers
 import { IInterviewData } from "@helpers/Interview";
@@ -86,7 +86,7 @@ const FeedbackEntry = ({ interview }: FeedbackEntryProps) => {
                 />
                 <FormHelperText>{formik.errors.details ?? ''}</FormHelperText>
             </FormControl>
-            <FeedbackRatingControl activeRate={activeRate} setActiveRateHandler={setActiveRateHandler} />
+            <FeedbackRatingControl activeRate={activeRate ?? 5} setActiveRateHandler={setActiveRateHandler} />
             <div style={{ flex: 1, display: 'flex', alignItems: 'end' }}>
                 <Button type='submit' variant="contained" disabled={formik.isSubmitting} color="warning" style={{ width: 150, marginInline: 5 }} >Empty</Button>
                 <Button type='submit' variant="contained" disabled={formik.isSubmitting} style={{ width: 150, marginInline: 5 }} >Send</Button>

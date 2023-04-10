@@ -1,5 +1,9 @@
 //UI
 import * as React from 'react';
+
+//Hooks
+import { useEffect } from 'react';
+
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
@@ -29,7 +33,7 @@ function TabPanel(props: TabPanelProps) {
         >
             {value === index && (
                 <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
+                    <Typography component={'span'}>{children}</Typography>
                 </Box>
             )}
         </div>
@@ -43,7 +47,7 @@ function a11yProps(index: number) {
     };
 }
 
-export default function BasicTabs() {
+export default function ProfilePage() {
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -61,7 +65,7 @@ export default function BasicTabs() {
                         <Tab label="Feedback" {...a11yProps(0)} />
                     </Tabs>
                 </Box>
-                <Container maxWidth="xl">
+                <Container maxWidth="xl" sx={{ height: '70vh' }}>
                     <TabPanel value={value} index={0}>
                         <FeedbackTable />
                     </TabPanel>

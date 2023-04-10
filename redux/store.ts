@@ -2,9 +2,10 @@ import axios from "axios";
 import { configureStore } from "@reduxjs/toolkit";
 import { createWrapper, HYDRATE } from "next-redux-wrapper";
 
-import authReducer from "redux/slices/auth";
-import interviewReducer from "redux/slices/interview";
 import userReducer from "redux/slices/user";
+import authReducer from "redux/slices/auth";
+import feedbackReducer from "redux/slices/feedback";
+import interviewReducer from "redux/slices/interview";
 
 type route = {
   host: string;
@@ -17,12 +18,14 @@ const deployment: route = {
   http: "https://",
   fullUrl: "https://interviewtime-be-production-bebc.up.railway.app",
 };
+
 const testing: route = {
   host: "localhost:8009",
   http: "http://",
   fullUrl: "http://localhost:8009",
 };
 
+//When Switching enviroments change this variable.
 const currentRoute = testing;
 
 export const authAPI = axios.create({
@@ -51,7 +54,14 @@ export const feedbackAPI = axios.create({
     Authorization: `Bearer ${
       typeof window !== "undefined" ? localStorage.getItem("token") : false
     }`,
+    "Content-Type": "application/json",
+    Host: currentRoute.host,
+    Accept: "*/*",
+    Connection: "keep-alive",
+    "Accept-Encoding": "gzip, deflate, br",
   },
+  timeout: 10_000,
+  withCredentials: true,
 });
 
 export const userAPI = axios.create({
@@ -76,6 +86,7 @@ const makeStore = () =>
       auth: authReducer,
       interview: interviewReducer,
       user: userReducer,
+      feedback: feedbackReducer,
     },
   });
 

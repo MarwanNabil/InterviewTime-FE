@@ -13,20 +13,21 @@ type route = {
   fullUrl: string;
 };
 
-const deployment: route = {
+const production: route = {
   host: "interviewtime-be-production-bebc.up.railway.app",
   http: "https://",
   fullUrl: "https://interviewtime-be-production-bebc.up.railway.app",
 };
 
-const testing: route = {
+const development: route = {
   host: "localhost:8009",
   http: "http://",
   fullUrl: "http://localhost:8009",
 };
 
 //When Switching enviroments change this variable.
-const currentRoute = testing;
+const currentRoute =
+  process.env.NODE_ENV === "development" ? development : production;
 
 export const authAPI = axios.create({
   baseURL: currentRoute.fullUrl + "/auth/",

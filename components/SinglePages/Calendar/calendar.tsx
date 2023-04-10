@@ -29,7 +29,7 @@ import { Route, Routes } from 'react-router-dom';
 
 //Calendar
 import { DateTime } from "luxon";
-import { Calendar, luxonLocalizer, momentLocalizer, Event, DateHeaderProps, DateCellWrapperProps } from "react-big-calendar";
+import { Calendar, luxonLocalizer, momentLocalizer, Event, DateHeaderProps, DateCellWrapperProps, View } from "react-big-calendar";
 import moment from 'moment'
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { ToolbarProps, HeaderProps, EventProps } from 'react-big-calendar';
@@ -39,7 +39,7 @@ const localizer = momentLocalizer(moment)
 //Helpers
 import { interviewUIArray, NA, dummyInterviewsTimes } from '@helpers/index';
 import { BorderLeftRounded } from '@mui/icons-material';
-import { IInterviewData, IInterviewUI } from '@helpers/Interview/index';
+import { IInterviewData, IInterviewUI, interviewStatusE } from '@helpers/Interview/index';
 
 //Store
 import { useDispatch, useSelector } from 'react-redux'
@@ -51,10 +51,12 @@ import { useEffect } from 'react';
 
 type CalendarProps = {
     interviews: IInterviewData[],
+    setCurrentSelectedInterviewIndex: React.Dispatch<React.SetStateAction<number>>,
+    setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>,
+    setOpenInterview: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function CalendarTool({ interviews }: CalendarProps) {
-    console.log(interviews);
+export default function CalendarTool({ interviews, setCurrentSelectedInterviewIndex: setCurrentSelectedIntervieIndex, setOpenDialog, setOpenInterview }: CalendarProps) {
     //Schedule Hook
     const [openSchedule, setOpenSchedule] = React.useState(false);
 
@@ -89,60 +91,53 @@ export default function CalendarTool({ interviews }: CalendarProps) {
         setTimeIndex(key)
     }
 
-
-
     //Calendar Related.
     const localizer = luxonLocalizer(DateTime);
 
-    const eventCalendarShape = (title: string, startDate: Date, bgColor: string, brdColor: string) => {
-
-
+    const eventCalendarShape = (interviewId: string, title: string, startDate: Date, bgColor: string, brdColor: string, interviewStatus: interviewStatusE) => {
         return (
             <div style={{
                 display: 'flex', flexDirection: "row", alignItems: 'end', columnGap: 5,
                 borderLeftWidth: 4, borderLeft: 'solid', justifyContent: 'space-between', paddingInline: 4,
                 borderRadius: 2, backgroundColor: bgColor, borderLeftColor: brdColor
+                , opacity: interviewStatus === interviewStatusE.waiting ? '0.5' : '1'
             }
             }>
-                <div style={{
+                <div key={interviewId} style={{
                     fontWeight: 600, fontSize: 13
                 }}> {title}</div >
-                < div style={{ color: '#A1A1A1', fontSize: 12 }}>
-                    {`${(startDate.getHours().toString().length === 1 ? '0' : '') + startDate.getHours()}:${(startDate.getMinutes().toString().length === 1 ? '0' : '') + startDate.getMinutes()} AM`}
+                < div style={{ fontSize: 12 }}>
+                    {`${(startDate.getHours().toString().length === 1 ? '0' : '') + startDate.getHours()}:${(startDate.getMinutes().toString().length === 1 ? '0' : '') + startDate.getMinutes()}`}
                 </div>
             </div >
         );
     };
 
-    const myCalendarInterviews: Event[] = [
-        // {
-        //     title: eventCalendarShape("PS", new Date("2023-04-08T10:00")),
-        //     start: new Date("2023-04-08T10:00"),
-        //     end: new Date("2023-04-08T17:00"),
+    const myCalendarInterviews: Event[] = [];
 
-        // },
-        // {
-        //     title: eventCalendarShape("OOP", new Date("2023-04-08T23:00")),
-        //     start: new Date("2023-04-08T23:00"),
-        //     end: new Date("2023-04-08T23:39")
-        // },
-        // {
-        //     title: eventCalendarShape("DB", new Date("2023-04-10T23:00")),
-        //     start: new Date("2023-04-10T23:00"),
-        //     end: new Date("2023-04-10T23:39")
-        // },
-    ];
+    interviews.forEach((interview, interviewIndex) => {
 
-    interviews.forEach(interview => {
-        const eventDate = new Date(interview.startTime.toString());
         const interviewTypeMetaData = interviewUIArray[interview.interviewType];
 
+        //Date Liberary auto tramform from UTC to your current time zone, which is great!!!
+        const eventStartDateInYourTimeZone = new Date(interview.startTime.toString());
+
+        const eventStartHoursStartDateInYourTimeZone = eventStartDateInYourTimeZone.getHours();
+        const eventEndHoursStartDateInYourTimeZone = eventStartHoursStartDateInYourTimeZone + 2;
+
+        const eventEndDateInYourTimeZone = new Date(eventStartDateInYourTimeZone.getTime());
+        eventEndDateInYourTimeZone.setHours(eventEndHoursStartDateInYourTimeZone, 0, 0, 0);
+
         myCalendarInterviews.push({
-            title: eventCalendarShape(interviewTypeMetaData.code, eventDate,
+            title: eventCalendarShape(
+                interview.eventId.toString(),
+                interviewTypeMetaData.code, eventStartDateInYourTimeZone,
                 interviewTypeMetaData.color.weak,
-                interviewTypeMetaData.color.solid),
-            start: eventDate,
-            end: eventDate,
+                interviewTypeMetaData.color.solid,
+                interview.interviewStatus),
+            start: eventStartDateInYourTimeZone,
+            end: eventEndDateInYourTimeZone,
+            resource: interviewIndex
         });
     })
 
@@ -156,17 +151,23 @@ export default function CalendarTool({ interviews }: CalendarProps) {
         const navigateHandler = (action: any) => {
             props.onNavigate(action);
         }
-        let viewActions = {
+        type viewActions = {
             DAY: 'day',
             WEEK: 'week',
             MONTH: 'month',
             AGENDA: 'agenda'
         }
-        const viewHandler = (action: any) => {
+        const viewHandler = (action: View) => {
             props.onView(action);
         }
-        const monthLabel = props.label.split(' ')[0].slice(0, 3);
-        const yearLabel = props.label.split(' ')[1];
+
+        let monthLabel = props.label.split(' ')[0].slice(0, 3);
+        let yearLabel = props.label.split(' ')[1];
+
+        if (props.view === 'agenda') {
+            monthLabel = props.label;
+            yearLabel = "";
+        }
 
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
@@ -190,13 +191,16 @@ export default function CalendarTool({ interviews }: CalendarProps) {
                             fontFamily: 'urbanist', fontSize: 14, fontWeight: 300,
                             textTransform: 'capitalize'
                         }}
-                        startIcon={<DateRangeIcon style={{ fontSize: 15 }} />}>Agenda</Button>
+                        startIcon={<DateRangeIcon style={{ fontSize: 15 }} />}
+                        onClick={() => viewHandler((props.view === 'agenda') ? 'month' : 'agenda')}
+                    >{props.view === 'agenda' ? 'Month' : 'Agenda'}</Button>
                     <Button variant="contained" size='small'
                         style={{
                             fontFamily: 'urbanist', fontSize: 14, fontWeight: 300,
                             backgroundColor: '#4382fe', textTransform: 'capitalize'
                         }}
-                        startIcon={<AddIcon style={{ fontSize: 15 }} />}>Interview</Button>
+                        startIcon={<AddIcon style={{ fontSize: 15 }} />}
+                        onClick={() => setOpenInterview(true)}>Interview</Button>
                 </div>
             </div >
         )
@@ -215,9 +219,6 @@ export default function CalendarTool({ interviews }: CalendarProps) {
                     // textTransform: 'uppercase',
                     fontFamily: 'Urbanist',
                     fontStyle: 'initial'
-                }}
-                onShowMore={(events, date) => {
-                    //display all events on that day.
                 }}
                 defaultView='month'
                 components={{
@@ -274,10 +275,11 @@ export default function CalendarTool({ interviews }: CalendarProps) {
                     if (isSelected) {
                         newStyle = {
                             ...newStyle,
-                            borderColor: "white",
                             paddingBlock: 1,
                             paddingInline: 1
                         }
+                        setCurrentSelectedIntervieIndex(event.resource);
+                        setOpenDialog(true);
                     }
 
                     return {

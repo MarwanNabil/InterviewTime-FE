@@ -4,11 +4,11 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { Container } from '@mui/system';
 
 //Components
 import FeedbackTable from "./FeedbackTable"
 import ProfileTab from "./ProfileTab"
-import { Container } from '@mui/system';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -58,15 +58,11 @@ export default function BasicTabs() {
             <div style={{ backgroundColor: "white" }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: "white" }}>
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                        <Tab label="History" {...a11yProps(0)} />
-                        <Tab label="Feedback" {...a11yProps(1)} />
+                        <Tab label="Feedback" {...a11yProps(0)} />
                     </Tabs>
                 </Box>
                 <Container maxWidth="xl">
                     <TabPanel value={value} index={0}>
-                        <FeedbackTable />
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
                         <FeedbackTable />
                     </TabPanel>
                 </Container>

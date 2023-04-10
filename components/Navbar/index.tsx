@@ -5,7 +5,14 @@ import Stack from '@mui/material/Stack';
 
 import IconButton from '@mui/material/IconButton';
 
+//Redux
+import { useDispatch, useSelector } from 'react-redux';
+
 const Navbar = () => {
+
+    const dispatch = useDispatch()
+    const user = useSelector((state: any) => state.user)
+
 
     return (<div style={{ height: '10vh', display: 'flex', flex: 1, paddingInline: 20 }}>
         <div style={{ flex: 5, }}>
@@ -52,19 +59,19 @@ const Navbar = () => {
                                     backgroundColor: '#fbdb81', paddingBlock: 4, paddingInline: 6,
                                     borderRadius: 10, border: 'solid', borderWidth: 'thin',
                                     borderColor: '#ebbb3b', textShadow: '0px 0px 8px black'
-                                }}>3</div>
+                                }}>0</div>
                             }
                         >
-                            <Avatar alt="Travis Howard" style={{ backgroundColor: '#5b595a' }} src="/static/images/avatar/2.jpg" />
+                            <Avatar alt={`${user.firstName} ${user.lastName}`} style={{ backgroundColor: '#5b595a' }} src="/static/images/avatar/2.jpg" />
                         </Badge>
                     </Stack>
                 </IconButton>
                 <div style={{ display: 'flex', rowGap: 2, flexDirection: 'column' }}>
                     <span style={{ fontFamily: 'Urbanist', fontWeight: 600, color: 'black' }}>
-                        Marwan Nabil
+                        {`${user.firstName} ${user.lastName}`}
                     </span>
                     <span style={{ color: 'gray', fontFamily: 'Urbanist', fontSize: 12 }}>
-                        marwan.nabil.eldeep@gmail.com
+                        {user.email}
                     </span>
                 </div>
             </div>

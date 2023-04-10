@@ -20,8 +20,6 @@ const initialState: IinterviewState = {
   interviews: [],
 };
 
-type InterviewState = typeof initialState;
-
 const interviewSlice = createSlice({
   name: "interview",
   initialState,

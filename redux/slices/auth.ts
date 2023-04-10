@@ -4,12 +4,22 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { authAPI } from "redux/index";
 
-const initialState = {
-  email: "",
-  tokens: { access: "", refresh: "" },
-  redirect_to: "",
-  is_authenticated: false,
-  is_loading_auth_data: true,
+type TauthState = {
+  token: {
+    access: string;
+    refresh: string;
+  };
+  isAuthenticated: boolean;
+  isLoadingAuthData: boolean;
+};
+
+const initialState: TauthState = {
+  token: {
+    access: "",
+    refresh: "",
+  },
+  isAuthenticated: false,
+  isLoadingAuthData: true,
 };
 
 type AuthState = typeof initialState;
@@ -23,23 +33,19 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login(state, action) {
-      state.redirect_to = action.payload.redirect_to;
-      state.tokens = action.payload.tokens;
-      state.is_authenticated = true;
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
     },
     logout(state) {
-      state.redirect_to = "";
-      state.tokens = {
+      state.token = {
         access: "",
         refresh: "",
       };
-      state.is_authenticated = false;
+      state.isAuthenticated = false;
     },
     loadInitialAuthState(state, action) {
-      state.redirect_to = "";
-      state.tokens = action.payload.tokens;
-      state.is_authenticated = action.payload.is_authenticated;
-      state.is_loading_auth_data = false;
+      state.token = action.payload.token;
+      state.isAuthenticated = action.payload.isAuthenticated;
     },
   },
 
@@ -73,9 +79,14 @@ function login(values: { email: string; password: string }) {
       const token = res.data.token;
 
       localStorage.setItem("token", JSON.stringify(token));
-      localStorage.setItem("is_authenticated", JSON.stringify(true));
+      localStorage.setItem("isAuthenticated", JSON.stringify(true));
 
-      dispatch(actions.login({ token, redirect_to: "/calendar" }));
+      dispatch(
+        actions.login({
+          token: { access: token, refresh: "" },
+          redirect_to: "/calendar",
+        })
+      );
     } catch (e) {
       throw e;
     }

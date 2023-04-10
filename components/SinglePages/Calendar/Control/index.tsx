@@ -31,11 +31,13 @@ import Stack from '@mui/material/Stack';
 
 type ControlCalendarProps = {
     activeCategoryIndex: Number,
-    setActiveCategoryIndexHandler: any,
+    setActiveCategoryIndexHandler: React.Dispatch<React.SetStateAction<Number>>,
+    openInterview: boolean,
+    setOpenInterview: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 
-const ControlCalendar = ({ activeCategoryIndex, setActiveCategoryIndexHandler }: ControlCalendarProps) => {
+const ControlCalendar = ({ activeCategoryIndex, setActiveCategoryIndexHandler, openInterview, setOpenInterview }: ControlCalendarProps) => {
 
     //Categories
     const categoryDataUI = [
@@ -48,7 +50,6 @@ const ControlCalendar = ({ activeCategoryIndex, setActiveCategoryIndexHandler }:
     })
 
     const [toggledAgenda, setToggleAgenda] = React.useState(false);
-    const [toggledDetails, setToggleDetails] = React.useState(true);
     const [toggledInterview, setToggleInterview] = React.useState(false);
     const [toggledCategories, setToggleCategories] = React.useState(true);
 
@@ -107,61 +108,12 @@ const ControlCalendar = ({ activeCategoryIndex, setActiveCategoryIndexHandler }:
             </Box>
             <Box sx={{
                 color: 'black',
-                pb: toggledAgenda ? 2 : 0,
+                pb: openInterview ? 2 : 0,
             }}>
 
                 <ListItemButton
                     alignItems="flex-start"
-                    onClick={() => setToggleAgenda(!toggledAgenda)}
-                    sx={{
-                        p: 3,
-                        '&:hover, &:focus': { '& svg': { opacity: toggledAgenda ? 1 : 0 } },
-                    }}
-                    disabled
-                >
-                    <ListItemText
-                        primary="Agenda"
-                        primaryTypographyProps={{
-                            fontSize: 16,
-                            fontWeight: 600,
-                            lineHeight: '20px',
-                            mb: '2px',
-                        }}
-                        sx={{ my: 0 }}
-                    />
-                    <KeyboardArrowDown
-                        sx={{
-                            mr: -1,
-                            opacity: 0,
-                            transform: toggledAgenda ? 'rotate(-180deg)' : 'rotate(0)',
-                            transition: '0.2s',
-                        }}
-                    />
-                </ListItemButton>
-                {toggledAgenda &&
-                    categoryDataUI.map((item) => (
-                        <ListItemButton
-                            key={item.label}
-                            sx={{ py: 0, minHeight: 32, color: 'black', fontFamily: 'urbanist' }}
-                        >
-                            <ListItemIcon>
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText
-                                primary={item.label}
-                                primaryTypographyProps={{ fontSize: 14, fontWeight: 'medium', fontFamily: 'urbanist' }}
-                            />
-                        </ListItemButton>
-                    ))}
-            </Box>
-            <Box sx={{
-                color: 'black',
-                pb: toggledInterview ? 2 : 0,
-            }}>
-
-                <ListItemButton
-                    alignItems="flex-start"
-                    onClick={() => setToggleInterview(!toggledInterview)}
+                    onClick={() => setOpenInterview(!openInterview)}
                     sx={{
                         p: 3,
                         '&:hover, &:focus': { '& svg': { opacity: toggledInterview ? 1 : 0 } },
@@ -181,12 +133,12 @@ const ControlCalendar = ({ activeCategoryIndex, setActiveCategoryIndexHandler }:
                         sx={{
                             mr: -1,
                             opacity: 0,
-                            transform: toggledInterview ? 'rotate(-180deg)' : 'rotate(0)',
+                            transform: openInterview ? 'rotate(-180deg)' : 'rotate(0)',
                             transition: '0.2s',
                         }}
                     />
                 </ListItemButton>
-                {toggledInterview && <Interview />}
+                {openInterview && <Interview />}
             </Box>
         </div>
 

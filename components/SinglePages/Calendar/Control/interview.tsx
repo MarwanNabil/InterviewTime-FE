@@ -46,7 +46,7 @@ const Interview = () => {
     for (let i = -1; i <= 3; i++) {
         const targetDate = new Date(currentDate.getTime() + dayToMilliseconds * i);
         const dayNumber = targetDate.getDate();
-        const monthNumber = targetDate.getMonth();
+        const monthNumber = targetDate.getMonth() + 1;
         suggestDates.push({
             daySMonth: dayNumber + '/' + monthNumber,
             actualDate: targetDate
@@ -62,6 +62,21 @@ const Interview = () => {
 
     //Time Suggestions
     const [timeIndex, setTimeIndex] = React.useState(-1);
+    const targetDayAsDate = suggestDates[interviewDateValue];
+    const suggestTimesInThatDate: Array<{
+        date: Date,
+        appointmentHSM: string
+    }> = [];
+
+    for (let i = 0; i < 7; i++) {
+        const specifiedDateAndTime = new Date(targetDayAsDate.actualDate);
+        specifiedDateAndTime.setHours(9 + i * 2, 0, 0, 0);
+        const appointmentHSM = (9 + i * 2) + ':00'
+        suggestTimesInThatDate.push({
+            date: specifiedDateAndTime,
+            appointmentHSM: appointmentHSM
+        });
+    }
 
     const onTimeClickHandler = (event: React.MouseEvent, key: number) => {
         setTimeIndex(key)
@@ -72,11 +87,13 @@ const Interview = () => {
     const [isLoadingRequest, setIsLoadingRequest] = React.useState<boolean>(false);
     const dispatch = useDispatch()
 
+
     const scheduleButtonHandler = async () => {
         setIsLoadingRequest(true);
         try {
+            console.log(suggestTimesInThatDate[timeIndex].date.getTimezoneOffset());
             await dispatch(interviewActions.post({
-                startDate: suggestDates[interviewDateValue].actualDate,
+                startDate: suggestTimesInThatDate[timeIndex].date,
                 interviewType: interviewTypeIndex
             }));
         } catch (e) {
@@ -124,12 +141,12 @@ const Interview = () => {
                     <Stack direction="column" rowGap={1.2}>
                         <FormLabel id="time-suggest">Time Suggestions</FormLabel>
                         <Stack direction="row" flexWrap="wrap" gap={1.2} style={{ overflowX: 'auto' }} >
-                            {dummyInterviewsTimes.map((appointment, i) => (
-                                <Button color={appointment.status} style={{ width: 60 }}
-                                    variant={i == timeIndex ? 'contained' : 'outlined'}
+                            {suggestTimesInThatDate.map((appointment, i) => (
+                                <Button color={'success'} style={{ width: 60 }}
+                                    variant={i == timeIndex && appointment.date > new Date() ? 'contained' : 'outlined'}
                                     onClick={(event) => onTimeClickHandler(event, i)}
-                                    disabled={interviewTypeIndex === 0}>
-                                    {appointment.time}
+                                    disabled={appointment.date <= new Date() || interviewTypeIndex === 0}>
+                                    {appointment.appointmentHSM}
                                 </Button>
                             ))}
                         </Stack>

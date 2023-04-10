@@ -1,10 +1,12 @@
 import * as React from 'react';
 
-import CircleIcon from '@mui/icons-material/Circle';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 
 //Components
 import CalendarTool from "./calendar";
 import ControlCalendar from './Control';
+import CalendarDialog from './CalendarDialog';
 
 //Helpers
 import { IInterviewData } from '@helpers/Interview/index';
@@ -16,22 +18,21 @@ import { useEffect } from 'react';
 
 export default function CalendarPage() {
 
-    const [isLoadingFromServer, isLoadingFromServerHandler] = React.useState(false);
+    //Loading From Server Hooks
+    const dispatch = useDispatch()
+    const [loadedFromServer, loadedFromServerHandler] = React.useState(false);
+    const [interviews, setInterviews] = React.useState<IInterviewData[]>([]);
+    const interviewsDumb = useSelector((state: any) => state.interview.interviews)[0];
+    const [targetedInterviews, setTargetedInverviews] = React.useState<IInterviewData[]>([]);
 
+    //Interview Dialog
+    const [openedDialog, setOpenedDialog] = React.useState<boolean>(true);
+    const [currentSelectedIntervieIndex, setCurrentSelectedInterviewIndex] = React.useState<number>(-1);
+
+    //Interviews Controls
     //Categories
     const [activeCategory, setActiveCategory] = React.useState<Number>(0);
-
-    //Interview Details
-
-    const [agendaToggle, agendaToggleHandler] = React.useState(false);
-    const [interviewToggle, interviewToggleHandler] = React.useState(false);
-
-    const dispatch = useDispatch()
-
-    const [interviews, setInterviews] = React.useState<IInterviewData[]>([]);
-    const [targetedInterviews, setTargetedInverviews] = React.useState<IInterviewData[]>([]);
-    const interviewsDumb = useSelector((state: any) => state.interview.interviews)[0];
-
+    const [interviewToggle, setInterviewToggleHandler] = React.useState(false);
 
     useEffect(() => {
 
@@ -40,7 +41,7 @@ export default function CalendarPage() {
             setInterviews(interviewsDumb);
         }
 
-        isLoadingFromServerHandler(true);
+        loadedFromServerHandler(true);
 
         if (interviews.length === 0) {
             //zero means, we have not done it previously.
@@ -58,18 +59,35 @@ export default function CalendarPage() {
         })
         setTargetedInverviews(targetedInterviewsBuffer);
 
-        isLoadingFromServerHandler(false);
+        loadedFromServerHandler(true);
 
-    }, [isLoadingFromServer, interviews, activeCategory]);
+    }, [loadedFromServer, interviews, activeCategory]);
+
 
     return (
-        <div style={{ display: 'flex', height: '90vh', borderTop: 'solid', borderTopWidth: 'thin', borderTopColor: '#efefef' }}>
-            <div style={{ flex: 3, borderRight: 'solid', borderRightWidth: 'thin', borderRightColor: '#efefef' }}>
-                <ControlCalendar activeCategoryIndex={activeCategory} setActiveCategoryIndexHandler={setActiveCategory} />
-            </div>
-            <div style={{ flex: 12 }}>
-                {!isLoadingFromServer && < CalendarTool interviews={targetedInterviews} />}
-            </div>
-        </div >
-    );
+        //if loaded from server is fale it does mean we haven't loaded anything. "prerender time."
+        !loadedFromServer ? (
+            <Box sx={{ display: 'flex' }}> <CircularProgress /> </Box>
+        ) : (
+            <div style={{ display: 'flex', height: '90vh', borderTop: 'solid', borderTopWidth: 'thin', borderTopColor: '#efefef' }}>
+                {
+                    currentSelectedIntervieIndex !== -1 &&
+                    <CalendarDialog
+                        interview={targetedInterviews[currentSelectedIntervieIndex]}
+                        openDialog={openedDialog}
+                        setOpenDialog={setOpenedDialog} />
+                }
+                <div style={{ flex: 3, borderRight: 'solid', borderRightWidth: 'thin', borderRightColor: '#efefef' }}>
+                    <ControlCalendar activeCategoryIndex={activeCategory} setActiveCategoryIndexHandler={setActiveCategory} openInterview={interviewToggle} setOpenInterview={setInterviewToggleHandler} />
+                </div>
+                <div style={{ flex: 12 }}>
+                    < CalendarTool
+                        interviews={targetedInterviews}
+                        setOpenDialog={setOpenedDialog}
+                        setCurrentSelectedInterviewIndex={setCurrentSelectedInterviewIndex}
+                        setOpenInterview={setInterviewToggleHandler}
+                    />
+                </div>
+            </div >
+        ));
 }

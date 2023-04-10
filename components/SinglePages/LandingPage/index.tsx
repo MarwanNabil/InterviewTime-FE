@@ -25,7 +25,7 @@ import { useFormik } from 'formik'
 
 //Store
 import { useDispatch } from 'react-redux'
-import { authActions } from 'redux/index';
+import { authActions, userActions } from 'redux/index';
 
 export default function LandingPage() {
   const dispatch = useDispatch()
@@ -40,7 +40,6 @@ export default function LandingPage() {
     onSubmit: async (values, actions) => {
       actions.setSubmitting(true)
       try {
-        console.log(values)
         await dispatch(authActions.login(values))
       } catch (e) {
         const error = e as any
@@ -52,6 +51,7 @@ export default function LandingPage() {
         }
 
       }
+      await dispatch(userActions.loadIntial())
       actions.setSubmitting(false)
     },
   })

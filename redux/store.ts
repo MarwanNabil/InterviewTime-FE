@@ -26,8 +26,21 @@ const development: route = {
 };
 
 //When Switching enviroments change this variable.
-const currentRoute =
-  process.env.NODE_ENV === "development" ? development : production;
+const currentRoute = production;
+// process.env.NODE_ENV === "development" ? development : production;
+
+const headers = {
+  Authorization: `Bearer ${
+    typeof window !== "undefined" && localStorage.getItem("auth")
+      ? JSON.parse(localStorage.getItem("auth")!).token
+      : ""
+  }`,
+  "Content-Type": "application/json",
+  // Host: currentRoute.host,
+  Accept: "*/*",
+  // Connection: "keep-alive",
+  // "Accept-Encoding": "gzip, deflate, br",
+};
 
 export const authAPI = axios.create({
   baseURL: currentRoute.fullUrl + "/auth/",
@@ -35,54 +48,21 @@ export const authAPI = axios.create({
 
 export const interviewAPI = axios.create({
   baseURL: currentRoute.fullUrl + "/interview/",
-  headers: {
-    Authorization: `Bearer ${
-      typeof window !== "undefined" && localStorage.getItem("auth")
-        ? JSON.parse(localStorage.getItem("auth")!).token
-        : ""
-    }`,
-    "Content-Type": "application/json",
-    Host: currentRoute.host,
-    Accept: "*/*",
-    Connection: "keep-alive",
-    "Accept-Encoding": "gzip, deflate, br",
-  },
+  headers: headers,
   timeout: 10_000,
   withCredentials: true,
 });
 
 export const feedbackAPI = axios.create({
   baseURL: currentRoute.fullUrl + "/feedback/",
-  headers: {
-    Authorization: `Bearer ${
-      typeof window !== "undefined" && localStorage.getItem("auth")
-        ? JSON.parse(localStorage.getItem("auth")!).token
-        : ""
-    }`,
-    "Content-Type": "application/json",
-    Host: currentRoute.host,
-    Accept: "*/*",
-    Connection: "keep-alive",
-    "Accept-Encoding": "gzip, deflate, br",
-  },
+  headers: headers,
   timeout: 10_000,
   withCredentials: true,
 });
 
 export const userAPI = axios.create({
   baseURL: currentRoute.fullUrl + "/user/",
-  headers: {
-    Authorization: `Bearer ${
-      typeof window !== "undefined" && localStorage.getItem("auth")
-        ? JSON.parse(localStorage.getItem("auth")!).token
-        : ""
-    }`,
-    "Content-Type": "application/json",
-    Host: currentRoute.host,
-    Accept: "*/*",
-    Connection: "keep-alive",
-    "Accept-Encoding": "gzip, deflate, br",
-  },
+  headers: headers,
   timeout: 10_000,
   withCredentials: true,
 });

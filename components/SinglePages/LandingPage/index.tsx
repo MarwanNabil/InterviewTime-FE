@@ -11,7 +11,7 @@ import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import Container from '@mui/material/Container';
 import Image from 'next/image';
 
@@ -26,75 +26,14 @@ import { useFormik } from 'formik'
 //Store
 import { useDispatch } from 'react-redux'
 import { authActions, feedbackActions, userActions } from 'redux/index';
+import LoginPage from './Login';
 
 export default function LandingPage() {
-  const dispatch = useDispatch()
-
-  //formik
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-    },
-    validationSchema: LoginSchema,
-    onSubmit: async (values, actions) => {
-      actions.setSubmitting(true)
-      try {
-        await dispatch(authActions.login(values))
-      } catch (e) {
-        const error = e as any
-        console.log(error)
-        if (error.response.data.message) {
-          actions.setFieldError('email', error.response.data.message)
-          actions.setFieldError('password', error.response.data.message)
-          return
-        }
-
-      }
-      await dispatch(userActions.loadIntial())
-      actions.setSubmitting(false)
-    },
-  })
-
-
-
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
 
   return (
-    <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', rowGap: 50, alignItems: 'center' }}>
-      <Image src={Logo} />
-      <form style={{ display: 'flex', flexDirection: 'column', rowGap: 20, alignItems: 'flex-end' }} onSubmit={formik.handleSubmit}>
-
-        <FormControl style={{ width: 500 }} error={formik.errors.email ? true : false} variant='outlined' >
-          <InputLabel >Email</InputLabel>
-          <OutlinedInput
-            id="email"
-            name='email'
-            type='email'
-            placeholder='Enter your email'
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            label='Email'
-          />
-          <FormHelperText>{formik.errors.email ?? ''}</FormHelperText>
-        </FormControl>
-        <FormControl style={{ width: 500 }} error={formik.errors.password ? true : false} variant='outlined' >
-          <InputLabel >Password</InputLabel>
-          <OutlinedInput
-            id="password"
-            name='password'
-            type='password'
-            placeholder='Enter your password'
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            label='Password'
-          />
-          <FormHelperText>{formik.errors.password ?? ''}</FormHelperText>
-        </FormControl>
-        <Button type='submit' variant="outlined" disabled={formik.isSubmitting} style={{ width: 150, marginInline: 5 }} >Login</Button>
-      </form>
+    <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', rowGap: 50, alignItems: 'center', height: '90vh' }}>
+      {/* <Image src={Logo} /> */}
+      <LoginPage />
     </Container>
   );
 }

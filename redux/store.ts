@@ -14,9 +14,9 @@ type route = {
 };
 
 const production: route = {
-  host: "interviewtime-be-production-bebc.up.railway.app",
+  host: "api.interviewtime.tech",
   http: "https://",
-  fullUrl: "https://interviewtime-be-production-bebc.up.railway.app",
+  fullUrl: "https://api.interviewtime.tech",
 };
 
 const development: route = {

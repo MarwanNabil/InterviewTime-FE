@@ -25,6 +25,7 @@ export interface IInterviewUI {
 }
 
 export interface IInterviewData {
+    _id: String;
     eventId: String;
     hangoutLink: String;
     interviewStatus: interviewStatusE;

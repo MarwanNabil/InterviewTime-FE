@@ -14,6 +14,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Button, Stack } from '@mui/material';
 import Container from '@mui/material/Container';
 import Image from 'next/image';
+import Divider from '@mui/material/Divider';
 
 //Images
 import Logo from "@public/images/logos-v4/logo-no-background.png"
@@ -27,14 +28,48 @@ import { useFormik } from 'formik'
 import { useDispatch } from 'react-redux'
 import { authActions, feedbackActions, userActions } from 'redux/index';
 import LoginPage from './Login';
+import { ST } from 'next/dist/shared/lib/utils';
+import SignUp from './SignUp';
 
 export default function LandingPage() {
 
+  const boxStyle: React.CSSProperties = {
+    backgroundColor: 'white', display: 'flex', flexDirection: 'column', rowGap: 20, padding: 30, borderRadius: 10, boxShadow: '0px 0px 10px rgb(0,0,0 , 0.2)'
+  };
+
+  //Logo Factor
+  const factor = 0.2;
+  const width = Logo.width * factor;
+  const height = Logo.height * factor;
+
+  //SignUp Dialog
+  const [openSignUp, setOpenSignUp] = React.useState<boolean>(false);
+
+  const handleClickOpen = () => {
+    setOpenSignUp(true);
+  };
+
+
   return (
-    <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', rowGap: 50, alignItems: 'center', height: '90vh' }}>
-      {/* <Image src={Logo} /> */}
-      <LoginPage />
-    </Container>
+    <div style={{ height: '100vh', backgroundColor: '#f5f5f5', display: 'flex', justifyContent: 'center' }}>
+      <Stack flexDirection="row" alignItems='center' columnGap={3}>
+        <Container style={{ flex: 3, ...boxStyle, alignItems: 'center', rowGap: 50 }}>
+          <Stack flexDirection="row" alignItems='center' columnGap={5}>
+            <Image src={Logo} width={width} height={height} />
+            <Divider variant='fullWidth' orientation='vertical' flexItem />
+            <h3 style={{ fontWeight: 500 }}>do you wanna ace your next FAANG interview ?</h3>
+          </Stack>
+          <iframe width="700" height="450" src="https://www.youtube.com/embed/kBSTNppvWb4" />
+        </Container>
+        <Container style={{ flex: 1, ...boxStyle }}>
+          <LoginPage />
+          <Divider />
+          <Button variant='contained' size='large' color='secondary' onClick={handleClickOpen}>Sign Up</Button>
+          <SignUp openDialog={openSignUp} setOpenDialog={setOpenSignUp} />
+        </Container>
+
+      </Stack>
+    </div>
   );
 }
 

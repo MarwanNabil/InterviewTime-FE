@@ -40,14 +40,13 @@ const LoginPage = () => {
             try {
                 await dispatch(authActions.login(values))
             } catch (e) {
-                const error = e as any
-                console.log(error)
-                if (error.response.data.message) {
-                    actions.setFieldError('email', error.response.data.message)
-                    actions.setFieldError('password', error.response.data.message)
-                    return
+                const error = e as any;
+                const msg = error.response.data.message;
+                actions.setFieldError('password', msg);
+                const errs = error.response.data.data;
+                for (let i = 0; i < errs.length; i++) {
+                    actions.setFieldError(errs[i].param, errs[i].msg)
                 }
-
             }
             await dispatch(userActions.loadIntial())
             actions.setSubmitting(false)
@@ -55,7 +54,7 @@ const LoginPage = () => {
     })
 
 
-    return (<form style={{ display: 'flex', flexDirection: 'column', rowGap: 20, alignItems: 'center' }} onSubmit={formik.handleSubmit}>
+    return (<form style={{ display: 'flex', flexDirection: 'column', rowGap: 20, alignItems: 'flex-end' }} onSubmit={formik.handleSubmit}>
 
         <FormControl style={{ width: 500 }} error={formik.errors.email ? true : false} variant='outlined' >
             <InputLabel >Email</InputLabel>
@@ -83,9 +82,9 @@ const LoginPage = () => {
             />
             <FormHelperText>{formik.errors.password ?? ''}</FormHelperText>
         </FormControl>
-        <Stack flex='row'>
-            <span>ho</span>
-            <Button type='submit' variant="contained" size='large' disabled={formik.isSubmitting} style={{ marginInline: 5 }} >Login</Button>
+        <Stack flexDirection="row" alignItems='center' columnGap={2}>
+            <span style={{ color: '#0093FF', fontWeight: 600 }}>Forgotten password?</span>
+            <Button type='submit' variant="contained" size='large' disabled={formik.isSubmitting} style={{ marginInline: 5, width: 200 }} >Login</Button>
         </Stack>
     </form>);
 }

@@ -76,8 +76,46 @@ function requestMyFeedbacks() {
   };
 }
 
+function postFeedback(values: {
+  interviewId: string;
+  title: string;
+  details: string;
+  overallScore: ReactionE;
+}) {
+  return async (dispatch: Dispath) => {
+    try {
+      const res = await feedbackAPI.post("", {
+        interviewId: values.interviewId,
+        title: values.title,
+        details: values.details,
+        overallScore: values.overallScore,
+      });
+    } catch (e) {
+      throw e;
+    }
+  };
+}
+
+function postStatusFeedback(values: {
+  feedbackId: string;
+  status: feedbackStatusE;
+}) {
+  return async (dispatch: Dispath) => {
+    try {
+      const res = await feedbackAPI.post("/status", {
+        feedbackId: values.feedbackId,
+        status: values.status,
+      });
+    } catch (e) {
+      throw e;
+    }
+  };
+}
+
 export const feedbackActions = {
   requestMyFeedbacks,
+  postFeedback,
+  postStatusFeedback,
   loadInStoreFeedbacks: actions.load,
 };
 

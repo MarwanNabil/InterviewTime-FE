@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useEffect } from "react";
 
 //Store
-import { feedbackActions } from 'redux/index';
+import { authActions, feedbackActions } from 'redux/index';
 import { useDispatch, useSelector } from 'react-redux'
 
 //UI
@@ -41,6 +41,12 @@ function createData(data: InterviewFeedbackI) {
 function Row(props: { row: ReturnType<typeof createData> }) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
+
+    const dispatch = useDispatch();
+
+    const onActionClick = async (statusAction: feedbackStatusE) => {
+        await dispatch(feedbackActions.postStatusFeedback({ feedbackId: row._id, status: statusAction }));
+    };
 
     return (
         <React.Fragment>
@@ -90,8 +96,8 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                                                     aria-label="Disabled elevation buttons"
 
                                                 >
-                                                    <Button color='success'>Accept</Button>
-                                                    <Button color='error'>Reject</Button>
+                                                    <Button color='success' onClick={() => onActionClick(feedbackStatusE.accepted)}>Accept</Button>
+                                                    <Button color='error' onClick={() => onActionClick(feedbackStatusE.rejected)}>Reject</Button>
                                                 </ButtonGroup>
                                             ) : (<div style={row.status === feedbackStatusE.accepted ? { color: '#07C82A' } : { color: '#DE3005' }}>
                                                 {row.status === feedbackStatusE.accepted ? <CheckCircleIcon /> : <DangerousIcon />}
@@ -173,7 +179,7 @@ export default function FeedbackTable() {
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow sx={{
-                            backgroundColor: '#000000', color: '#FFFFFF', fontWeight: 550
+                            backgroundColor: 'rgb(91, 89, 90)', color: '#FFFFFF', fontWeight: 550
                         }}>
                             <TableCell />
                             <TableCell align="left" sx={{ color: 'inherit', fontWeight: 'inherit' }}>Date</TableCell>

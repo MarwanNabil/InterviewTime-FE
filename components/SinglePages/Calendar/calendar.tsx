@@ -67,7 +67,8 @@ export default function CalendarTool({ interviews, setCurrentSelectedInterviewIn
                 display: 'flex', flexDirection: "row", alignItems: 'end', columnGap: 5,
                 borderLeftWidth: 4, borderLeft: 'solid', justifyContent: 'space-between', paddingInline: 4,
                 borderRadius: 2, backgroundColor: bgColor, borderLeftColor: brdColor
-                , opacity: interviewStatus === interviewStatusE.waiting ? '0.5' : '1'
+                , opacity: interviewStatus === interviewStatusE.waiting ? '0.5' : '1',
+                maxWidth: 300
             }
             }
                 onClick={() => {

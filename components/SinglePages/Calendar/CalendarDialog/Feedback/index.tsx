@@ -12,7 +12,7 @@ import { useFormik } from 'formik'
 
 //Store
 import { useDispatch } from 'react-redux'
-import { feedbackActions, userActions } from 'redux/index';
+import { feedbackActions } from 'redux/index';
 
 //Helpers
 import { IInterviewData } from "@helpers/Interview";
@@ -24,6 +24,10 @@ type FeedbackEntryProps = {
 
 const FeedbackEntry = ({ interview }: FeedbackEntryProps) => {
 
+
+    const [activeRate, setActiveRateHandler] = React.useState<number>(4);
+
+    //Redux Hooks
     const dispatch = useDispatch()
 
     //formik
@@ -35,24 +39,26 @@ const FeedbackEntry = ({ interview }: FeedbackEntryProps) => {
         validationSchema: FeedbackSchema,
         onSubmit: async (values, actions) => {
             actions.setSubmitting(true)
-            // try {
-            //     await dispatch(authActions.login(values))
-            // } catch (e) {
-            //     const error = e as any
-            //     console.log(error)
-            //     if (error.response.data.message) {
-            //         actions.setFieldError('email', error.response.data.message)
-            //         actions.setFieldError('password', error.response.data.message)
-            //         return
-            //     }
+            try {
+                await dispatch(feedbackActions.postFeedback({
+                    interviewId: interview._id.toString(),
+                    details: values.details,
+                    overallScore: activeRate - 1, title: values.summary
+                }))
+            } catch (e) {
+                const error = e as any
+                console.log(error)
+                if (error.response.data.message) {
+                    actions.setFieldError('summary', error.response.data.message)
+                    actions.setFieldError('details', error.response.data.message)
+                    return
+                }
 
-            // }
-            // await dispatch(userActions.loadIntial())
+            }
             actions.setSubmitting(false)
         },
     })
 
-    const [activeRate, setActiveRateHandler] = React.useState<number>(4);
 
     return (<div>
         <form style={{ display: 'flex', flexDirection: 'column', rowGap: 20, alignItems: 'center' }}
@@ -86,9 +92,9 @@ const FeedbackEntry = ({ interview }: FeedbackEntryProps) => {
                 />
                 <FormHelperText>{formik.errors.details ?? ''}</FormHelperText>
             </FormControl>
-            <FeedbackRatingControl activeRate={activeRate ?? 5} setActiveRateHandler={setActiveRateHandler} />
+            <FeedbackRatingControl activeRate={activeRate} setActiveRateHandler={setActiveRateHandler} />
             <div style={{ flex: 1, display: 'flex', alignItems: 'end' }}>
-                <Button type='submit' variant="contained" disabled={formik.isSubmitting} color="warning" style={{ width: 150, marginInline: 5 }} >Empty</Button>
+                <Button variant="contained" disabled={formik.isSubmitting} color="warning" style={{ width: 150, marginInline: 5 }} >Empty</Button>
                 <Button type='submit' variant="contained" disabled={formik.isSubmitting} style={{ width: 150, marginInline: 5 }} >Send</Button>
             </div>
         </form>
@@ -98,10 +104,10 @@ const FeedbackEntry = ({ interview }: FeedbackEntryProps) => {
 export default FeedbackEntry;
 
 const FeedbackSchema = Yup.object().shape({
-    summary: Yup.string().email('invalid summary.').required('Required'),
+    summary: Yup.string().min(4, 'too short.').max(100, 'too long.').required('Required'),
     details: Yup.string()
         .min(10, 'too short.')
-        .max(100, 'too long.')
+        .max(500, 'too long.')
         .required('Required'),
 })
 

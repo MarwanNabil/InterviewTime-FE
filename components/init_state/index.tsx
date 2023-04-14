@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 //redux actions
 import { authActions, interviewActions, userActions } from 'redux/index'
@@ -13,15 +13,21 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 export default function InitState({ children }: { children: JSX.Element }) {
     const dispatch = useDispatch()
-    const [isLoading, isLoadingHandler] = React.useState(true);
+
+    //loadingScreen & Auth Guard
+    const auth = useSelector((state: any) => state.auth);
 
     const authStorage = useLocalStorage('auth')
     const userStorage = useLocalStorage('user');
+    const feedbackStorage = useLocalStorage('feedback');
     const interviewStorage = useLocalStorage('interview')
 
     //loading data for auth state
     useEffect(() => {
-        if (authStorage.loading && interviewStorage.loading && userStorage.loading) return
+        dispatch(authActions.setOnLoadingScreen());
+
+        if (authStorage.loading && interviewStorage.loading && userStorage.loading && feedbackStorage.loading) return
+
 
         dispatch(
             authActions.loadInitialAuthState(authStorage.values.get('auth') ?? {
@@ -47,14 +53,13 @@ export default function InitState({ children }: { children: JSX.Element }) {
         )
 
 
-        isLoadingHandler(false);
+        dispatch(authActions.setOffLoadingScreen());
 
-    }, [authStorage.loading, interviewStorage.loading, userStorage.loading, dispatch])
+    }, [authStorage.loading, interviewStorage.loading, userStorage.loading, feedbackStorage.loading, dispatch])
 
-    return (isLoading ? (
+    return (auth.isLoadingData ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
             <CircularProgress />
-
         </div>)
         : (
             children

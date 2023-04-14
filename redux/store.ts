@@ -26,8 +26,8 @@ const development: route = {
 };
 
 //When Switching enviroments change this variable.
-const currentRoute = production;
-// process.env.NODE_ENV === "development" ? development : production;
+const currentRoute =
+  process.env.NODE_ENV === "development" ? development : production;
 
 const headers = {
   Authorization: `Bearer ${
@@ -36,10 +36,10 @@ const headers = {
       : ""
   }`,
   "Content-Type": "application/json",
-  // Host: currentRoute.host,
+  Host: currentRoute.host,
   Accept: "*/*",
-  // Connection: "keep-alive",
-  // "Accept-Encoding": "gzip, deflate, br",
+  Connection: "keep-alive",
+  "Accept-Encoding": "gzip, deflate, br",
 };
 
 export const authAPI = axios.create({

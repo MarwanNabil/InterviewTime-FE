@@ -66,7 +66,6 @@ function loadIntial() {
       data.email = data._id;
 
       dispatch(actions.load(data));
-      console.log(data);
       localStorage.setItem("user", JSON.stringify(data));
     } catch (e) {
       throw e;

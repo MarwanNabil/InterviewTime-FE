@@ -23,7 +23,7 @@ const Navbar = () => {
             justifyContent: 'center', alignItems: 'center',
         }}>
             <div style={{ flex: 1 }}>
-                <Stack direction="row" spacing={2}>
+                {/* <Stack direction="row" spacing={2}>
                     <Badge
                         overlap="circular"
                         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -38,11 +38,11 @@ const Navbar = () => {
                     >
                         <NotificationsIcon style={{ color: '#5b595a' }} />
                     </Badge>
-                </Stack>
+                </Stack> */}
             </div>
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }} >
+            {/* <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }} >
                 <div style={{ height: 30, backgroundColor: 'gray', width: 1 }} />
-            </div>
+            </div> */}
             <div style={{
                 flex: 2, display: "flex", flexDirection: 'row',
                 justifyContent: 'center', alignItems: 'center',

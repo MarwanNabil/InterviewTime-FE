@@ -10,9 +10,10 @@ import { Sidebar, Menu, MenuItem, SubMenu, useProSidebar, sidebarClasses } from 
 import NavBar from '@components/Navbar/index';
 
 //Single Pages
-import LandingPage from '@components/SinglePages/LandingPage';
-import CalendarPage from '@components/SinglePages/Calendar';
+import Logout from "@components/SinglePages/Logout";
 import Profile from '@components/SinglePages/Profile';
+import CalendarPage from '@components/SinglePages/Calendar';
+import LandingPage from '@components/SinglePages/LandingPage';
 
 import HomeIcon from '@mui/icons-material/Home';
 import IconButton from '@mui/material/IconButton';
@@ -21,6 +22,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 
 
 export default function View() {
@@ -34,13 +37,20 @@ export default function View() {
 
     //Hooks
     const location = useLocation();
+    const router = useRouter();
+    const auth = useSelector((state: any) => state.auth);
+    const [isLoggedInState, setIsLoggedInState] = React.useState(false);
     const [currentActivePath, setActiveCurrentPath] = React.useState(location.pathname);
 
     React.useEffect(() => {
-
         setActiveCurrentPath(location.pathname);
-
     }, [location.pathname]);
+
+    React.useEffect(() => {
+        if (auth.isAuthenticated) {
+            setIsLoggedInState(true);
+        }
+    }, [auth])
 
 
     //Sidebar
@@ -64,50 +74,49 @@ export default function View() {
                         <Image src={Logo} width={logoW} height={logoH} />
                     </div>
 
-                    <MenuItem component={<Link to='/' />}>
-                        <IconButton style={buttonSideBarStyle}>
-                            <HomeIcon style={currentActivePath === '/' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
-                        </IconButton>
-                    </MenuItem>
+                    {!isLoggedInState && <>
+                        <MenuItem component={<Link to='/' />}>
+                            <IconButton style={buttonSideBarStyle}>
+                                <HomeIcon style={currentActivePath === '/' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
+                            </IconButton>
+                        </MenuItem>
+                    </>}
 
-                    <MenuItem component={<Link to='/calendar' />}>
-                        <IconButton style={buttonSideBarStyle}>
-                            <CalendarMonthIcon style={currentActivePath === '/calendar' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
-                        </IconButton>
-                    </MenuItem>
+                    {isLoggedInState === true && <>
+                        <MenuItem component={<Link to='/' />}>
+                            <IconButton style={buttonSideBarStyle}>
+                                <CalendarMonthIcon style={currentActivePath === '/' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
+                            </IconButton>
+                        </MenuItem>
 
-                    <MenuItem component={<Link to='/profile' />}>
-                        <IconButton style={buttonSideBarStyle}>
-                            <AccountBoxIcon style={currentActivePath === '/profile' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
-                        </IconButton>
-                    </MenuItem>
+                        <MenuItem component={<Link to='/profile' />}>
+                            <IconButton style={buttonSideBarStyle}>
+                                <AccountBoxIcon style={currentActivePath === '/profile' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
+                            </IconButton>
+                        </MenuItem>
 
-                    <MenuItem component={<Link to='/settings' />}>
-                        <IconButton style={buttonSideBarStyle}>
-                            <SettingsIcon style={currentActivePath === '/settings' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
-                        </IconButton>
-                    </MenuItem>
-
-                    <MenuItem component={<Link to='/logout' />}>
-                        <IconButton style={buttonSideBarStyle}>
-                            <LogoutIcon style={currentActivePath === '/logout' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
-                        </IconButton>
-                    </MenuItem>
-
+                        <MenuItem component={<Link to='/logout' />}>
+                            <IconButton style={buttonSideBarStyle}>
+                                <LogoutIcon style={currentActivePath === '/logout' ? activeIconButtonSideBarStyle : notActiveIconButtonSideBarStyle} />
+                            </IconButton>
+                        </MenuItem>
+                    </>}
                 </Menu>
             </Sidebar>
             <main style={{ flex: 1, overflowY: "auto" }}>
                 <Routes>
-                    <Route path='/' element={<LandingPage />} />
-                    <Route path='/calendar' element={
-                        <>
-                            <NavBar />
-                            <CalendarPage />
-                        </>
-                    } />
+                    <Route path='/' element={isLoggedInState ? <>
+                        <NavBar />
+                        <CalendarPage />
+                    </> : <LandingPage />} />
                     <Route path='/profile' element={
                         <>
                             <Profile />
+                        </>
+                    } />
+                    <Route path='/logout' element={
+                        <>
+                            <Logout />
                         </>
                     } />
                 </Routes>

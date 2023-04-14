@@ -29,10 +29,17 @@ const authSlice = createSlice({
     login(state, action) {
       state.token = action.payload.token;
       state.isAuthenticated = true;
+      state.isLoadingData = false;
     },
     logout(state) {
       state.token = "";
       state.isAuthenticated = false;
+    },
+    setOnLoading(state) {
+      state.isLoadingData = true;
+    },
+    setOffLoading(state) {
+      state.isLoadingData = false;
     },
     loadInitialAuthState(state, action) {
       state.token = action.payload.token;
@@ -75,6 +82,7 @@ function login(values: { email: string; password: string }) {
         JSON.stringify({
           token,
           isAuthenticated,
+          isLoadingData: false,
         })
       );
 
@@ -99,9 +107,31 @@ export function logout() {
   };
 }
 
+export function signup(values: {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+}) {
+  return async (dispatch: Dispath) => {
+    try {
+      const res = await authAPI.post("signup/", {
+        ...values,
+        timeZone: "Africa/Cairo",
+      });
+    } catch (e) {
+      throw e;
+    }
+  };
+}
+
 export const authActions = {
   login,
   logout,
+  signup,
+  setOnLoadingScreen: actions.setOnLoading,
+  setOffLoadingScreen: actions.setOffLoading,
   loadInitialAuthState: actions.loadInitialAuthState,
 };
 

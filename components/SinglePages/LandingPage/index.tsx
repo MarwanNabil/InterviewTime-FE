@@ -59,7 +59,7 @@ export default function LandingPage() {
             <Divider variant='fullWidth' orientation='vertical' flexItem />
             <h3 style={{ fontWeight: 500 }}>do you wanna ace your next FAANG interview ?</h3>
           </Stack>
-          <iframe width="700" height="450" src="https://www.youtube.com/embed/kBSTNppvWb4" />
+          <iframe width="700" height="450" src="https://www.youtube.com/embed/jfpdr9j94_k" />
         </Container>
         <Container style={{ flex: 1, ...boxStyle }}>
           <LoginPage />

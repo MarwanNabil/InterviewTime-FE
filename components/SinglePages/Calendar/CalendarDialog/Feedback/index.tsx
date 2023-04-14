@@ -33,7 +33,7 @@ const FeedbackEntry = ({ interview }: FeedbackEntryProps) => {
     //formik
     const formik = useFormik({
         initialValues: {
-            summary: '',
+            title: '',
             details: '',
         },
         validationSchema: FeedbackSchema,
@@ -43,17 +43,15 @@ const FeedbackEntry = ({ interview }: FeedbackEntryProps) => {
                 await dispatch(feedbackActions.postFeedback({
                     interviewId: interview._id.toString(),
                     details: values.details,
-                    overallScore: activeRate - 1, title: values.summary
+                    overallScore: activeRate - 1, title: values.title
                 }))
             } catch (e) {
                 const error = e as any
-                console.log(error)
-                if (error.response.data.message) {
-                    actions.setFieldError('summary', error.response.data.message)
-                    actions.setFieldError('details', error.response.data.message)
-                    return
+                if (error.response.data.data.length > 0) {
+                    for (let i = 0; i < error.response.data.data.length; i++) {
+                        actions.setFieldError(error.response.data.data[i].param, error.response.data.data[i].msg);
+                    }
                 }
-
             }
             actions.setSubmitting(false)
         },
@@ -64,18 +62,18 @@ const FeedbackEntry = ({ interview }: FeedbackEntryProps) => {
         <form style={{ display: 'flex', flexDirection: 'column', rowGap: 20, alignItems: 'center' }}
             onSubmit={formik.handleSubmit}>
 
-            <FormControl style={{ width: 500 }} error={formik.errors.summary ? true : false} variant='outlined' >
-                <InputLabel>Summary</InputLabel>
+            <FormControl style={{ width: 500 }} error={formik.errors.title ? true : false} variant='outlined' >
+                <InputLabel>Title</InputLabel>
                 <OutlinedInput
-                    id="summary"
-                    name='summary'
+                    id="title"
+                    name='title'
                     type='text'
                     placeholder='Enter the summary'
-                    value={formik.values.summary}
+                    value={formik.values.title}
                     onChange={formik.handleChange}
-                    label='Summary'
+                    label='Title'
                 />
-                <FormHelperText>{formik.errors.details ?? ''}</FormHelperText>
+                <FormHelperText>{formik.errors.title ?? ''}</FormHelperText>
             </FormControl>
             <FormControl style={{ width: 500 }} error={formik.errors.details ? true : false} variant='outlined' >
                 <InputLabel >Details</InputLabel>
@@ -104,7 +102,7 @@ const FeedbackEntry = ({ interview }: FeedbackEntryProps) => {
 export default FeedbackEntry;
 
 const FeedbackSchema = Yup.object().shape({
-    summary: Yup.string().min(4, 'too short.').max(100, 'too long.').required('Required'),
+    title: Yup.string().min(10, 'too short.').max(100, 'too long.').required('Required'),
     details: Yup.string()
         .min(10, 'too short.')
         .max(500, 'too long.')

@@ -13,13 +13,13 @@ const Logout = () => {
         const logout = async () => {
             await dispatch(authActions.logout);
             localStorage.removeItem('auth');
-            router.push('/')
+            router.push('/').then(() => router.reload());
         }
         logout();
     }, [dispatch]);
 
 
-    return (<></>);
+    return (null);
 }
 
 export default Logout;

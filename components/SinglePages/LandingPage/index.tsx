@@ -34,7 +34,7 @@ import SignUp from './SignUp';
 export default function LandingPage() {
 
   const boxStyle: React.CSSProperties = {
-    backgroundColor: 'white', display: 'flex', flexDirection: 'column', rowGap: 20, padding: 30, borderRadius: 10, boxShadow: '0px 0px 10px rgb(0,0,0 , 0.2)'
+    backgroundColor: 'white', display: 'flex', flexDirection: 'column', rowGap: 20, padding: 30, borderRadius: 10,
   };
 
   //Logo Factor
@@ -51,7 +51,7 @@ export default function LandingPage() {
 
 
   return (
-    <div style={{ height: '100vh', backgroundColor: '#f5f5f5', display: 'flex', justifyContent: 'center' }}>
+    <div style={{ height: '100vh', backgroundColor: '', display: 'flex', justifyContent: 'center' }}>
       <Stack flexDirection="row" alignItems='center' columnGap={3}>
         <Container style={{ flex: 3, ...boxStyle, alignItems: 'center', rowGap: 50 }}>
           <Stack flexDirection="row" alignItems='center' columnGap={5}>
@@ -61,7 +61,7 @@ export default function LandingPage() {
           </Stack>
           <iframe width="700" height="450" src="https://www.youtube.com/embed/jfpdr9j94_k" />
         </Container>
-        <Container style={{ flex: 1, ...boxStyle }}>
+        <Container style={{ flex: 1, ...boxStyle, boxShadow: '0px 0px 10px rgb(0,0,0 , 0.2)' }}>
           <LoginPage />
           <Divider />
           <Button variant='contained' size='large' color='secondary' onClick={handleClickOpen}>Sign Up</Button>

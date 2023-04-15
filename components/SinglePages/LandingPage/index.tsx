@@ -34,7 +34,7 @@ import SignUp from './SignUp';
 export default function LandingPage() {
 
   const boxStyle: React.CSSProperties = {
-    backgroundColor: 'white', display: 'flex', flexDirection: 'column', rowGap: 20, padding: 30, borderRadius: 10,
+    backgroundColor: 'white', display: 'flex', flexDirection: 'column', rowGap: 20, padding: 30, borderRadius: 10
   };
 
   //Logo Factor
@@ -52,7 +52,7 @@ export default function LandingPage() {
 
   return (
     <div style={{ height: '100vh', backgroundColor: '', display: 'flex', justifyContent: 'center' }}>
-      <Stack flexDirection="row" alignItems='center' columnGap={3}>
+      <Stack flexDirection="row" alignItems='center' columnGap={3} flexWrap="wrap">
         <Container style={{ flex: 3, ...boxStyle, alignItems: 'center', rowGap: 50 }}>
           <Stack flexDirection="row" alignItems='center' columnGap={5}>
             <Image src={Logo} width={width} height={height} />

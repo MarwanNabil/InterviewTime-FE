@@ -54,7 +54,7 @@ const LoginPage = () => {
     })
 
 
-    return (<form style={{ display: 'flex', flexDirection: 'column', rowGap: 20, alignItems: 'flex-end' }} onSubmit={formik.handleSubmit}>
+    return (<form style={{ display: 'flex', flexDirection: 'column', rowGap: 20, alignItems: 'center' }} onSubmit={formik.handleSubmit}>
 
         <FormControl style={{ width: 500 }} error={formik.errors.email ? true : false} variant='outlined' >
             <InputLabel >Email</InputLabel>

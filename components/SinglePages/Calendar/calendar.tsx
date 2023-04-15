@@ -1,31 +1,16 @@
 //UI
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
-import Paper, { PaperProps } from '@mui/material/Paper';
-import Draggable from 'react-draggable';
-import { ButtonGroup } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import IconButton from '@mui/material/IconButton';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import Container from '@mui/material/Container';
-import { Route, Routes } from 'react-router-dom';
+
+//Icons
+import AddIcon from '@mui/icons-material/Add'
+import IconButton from '@mui/material/IconButton';
+import LanguageIcon from '@mui/icons-material/Language';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 //Calendar
 import { DateTime } from "luxon";
@@ -37,29 +22,61 @@ const localizer = momentLocalizer(moment)
 
 
 //Helpers
-import { interviewUIArray, NA, dummyInterviewsTimes } from '@helpers/index';
-import { BorderLeftRounded } from '@mui/icons-material';
+import { interviewUIArray } from '@helpers/index';
 import { IInterviewData, IInterviewUI, interviewStatusE } from '@helpers/Interview/index';
 
 //Store
-import { useDispatch, useSelector } from 'react-redux'
-import { interviewActions } from 'redux/index';
 import { useEffect } from 'react';
+import { interviewActions } from 'redux/index';
+import { useDispatch, useSelector } from 'react-redux'
 
 
 
 
 type CalendarProps = {
     interviews: IInterviewData[],
-    setCurrentSelectedInterviewIndex: React.Dispatch<React.SetStateAction<number>>,
     setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>,
     setOpenInterview: React.Dispatch<React.SetStateAction<boolean>>
+    setCurrentSelectedInterviewIndex: React.Dispatch<React.SetStateAction<number>>,
 }
 
 export default function CalendarTool({ interviews, setCurrentSelectedInterviewIndex: setCurrentSelectedIntervieIndex, setOpenDialog, setOpenInterview }: CalendarProps) {
-
     //Calendar Related.
     const localizer = luxonLocalizer(DateTime);
+
+    //Today Button
+    const [todayWorldButtonActive, setTodayWorldButtonActive] = React.useState<boolean>(false);
+
+    //Redux
+    const dispatch = useDispatch();
+    const worldTodayInterviews = useSelector((state: any) => state.interview.worldInterviews)[0];
+    const [myCalendarEvents, setMyCalendarEvents] = React.useState<Event[]>();
+
+    useEffect(() => {
+        const eventsBuffer: Event[] = changeInterviewsToEvents(interviews);
+        setMyCalendarEvents(eventsBuffer);
+    }, [interviews])
+
+    useEffect(() => {
+        const getTodayWorldInterviews = async () => {
+            await dispatch(interviewActions.requestTodayWorldInterviews());
+        }
+        if (todayWorldButtonActive) {
+            getTodayWorldInterviews();
+        } else {
+            const eventsBuffer: Event[] = changeInterviewsToEvents(interviews);
+            setMyCalendarEvents(eventsBuffer);
+        }
+    }, [todayWorldButtonActive]);
+
+    useEffect(() => {
+        if (todayWorldButtonActive &&
+            worldTodayInterviews &&
+            worldTodayInterviews.length > 0) {
+            const eventsBuffer: Event[] = changeInterviewsToEvents(worldTodayInterviews);
+            setMyCalendarEvents(eventsBuffer);
+        }
+    }, [worldTodayInterviews]);
 
     const eventCalendarShape = (interviewId: string, title: string, startDate: Date, bgColor: string, brdColor: string, interviewStatus: interviewStatusE, interviewIndex: number) => {
         return (
@@ -72,10 +89,13 @@ export default function CalendarTool({ interviews, setCurrentSelectedInterviewIn
             }
             }
                 onClick={() => {
-                    setOpenDialog(() => {
-                        setCurrentSelectedIntervieIndex(interviewIndex);
-                        return true;
-                    });
+                    if (todayWorldButtonActive) {
+                    } else {
+                        setOpenDialog(() => {
+                            setCurrentSelectedIntervieIndex(interviewIndex);
+                            return true;
+                        });
+                    }
                 }}
             >
                 <div key={interviewId} style={{
@@ -88,34 +108,39 @@ export default function CalendarTool({ interviews, setCurrentSelectedInterviewIn
         );
     };
 
-    const myCalendarInterviews: Event[] = [];
 
-    interviews.forEach((interview, interviewIndex) => {
 
-        const interviewTypeMetaData = interviewUIArray[interview.interviewType];
+    const changeInterviewsToEvents = (interviews: IInterviewData[]) => {
+        const myEventsBuffer: Event[] = [];
+        interviews.forEach((interview, interviewIndex) => {
 
-        //Date Liberary auto tramform from UTC to your current time zone, which is great!!!
-        const eventStartDateInYourTimeZone = new Date(interview.startTime.toString());
+            const interviewTypeMetaData = interviewUIArray[interview.interviewType];
 
-        const eventStartHoursStartDateInYourTimeZone = eventStartDateInYourTimeZone.getHours();
-        const eventEndHoursStartDateInYourTimeZone = eventStartHoursStartDateInYourTimeZone + 2;
+            //Date Liberary auto transform from UTC to your current time zone, which is great!!!
+            const eventStartDateInYourTimeZone = new Date(interview.startTime.toString());
 
-        const eventEndDateInYourTimeZone = new Date(eventStartDateInYourTimeZone.getTime());
-        eventEndDateInYourTimeZone.setHours(eventEndHoursStartDateInYourTimeZone, 0, 0, 0);
+            const eventStartHoursStartDateInYourTimeZone = eventStartDateInYourTimeZone.getHours();
+            const eventEndHoursStartDateInYourTimeZone = eventStartHoursStartDateInYourTimeZone + 2;
 
-        myCalendarInterviews.push({
-            title: eventCalendarShape(
-                interview.eventId.toString(),
-                interviewTypeMetaData.code, eventStartDateInYourTimeZone,
-                interviewTypeMetaData.color.weak,
-                interviewTypeMetaData.color.solid,
-                interview.interviewStatus,
-                interviewIndex),
-            start: eventStartDateInYourTimeZone,
-            end: eventEndDateInYourTimeZone,
-            resource: interviewIndex
+            const eventEndDateInYourTimeZone = new Date(eventStartDateInYourTimeZone.getTime());
+            eventEndDateInYourTimeZone.setHours(eventEndHoursStartDateInYourTimeZone, 0, 0, 0);
+
+            myEventsBuffer.push({
+                title: eventCalendarShape(
+                    interview.eventId.toString(),
+                    interviewTypeMetaData.code, eventStartDateInYourTimeZone,
+                    interviewTypeMetaData.color.weak,
+                    interviewTypeMetaData.color.solid,
+                    interview.interviewStatus,
+                    interviewIndex),
+                start: eventStartDateInYourTimeZone,
+                end: eventEndDateInYourTimeZone,
+                resource: interviewIndex
+            });
         });
-    });
+
+        return myEventsBuffer;
+    }
 
     const toolbarHandler = (props: ToolbarProps<Event, object>) => {
         let navigateActions = {
@@ -145,6 +170,10 @@ export default function CalendarTool({ interviews, setCurrentSelectedInterviewIn
             yearLabel = "";
         }
 
+        const toolbarButtonStyle: React.CSSProperties = {
+            fontSize: 14, fontWeight: 300, textTransform: 'capitalize'
+        }
+
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 150 }}>
@@ -162,21 +191,34 @@ export default function CalendarTool({ interviews, setCurrentSelectedInterviewIn
                     </div>
                 </div>
                 <div style={{ display: 'flex', columnGap: 15, alignItems: 'center' }}>
-                    <Button variant='contained' size='small' color='info'
-                        style={{
-                            fontFamily: 'urbanist', fontSize: 14, fontWeight: 300,
-                            textTransform: 'capitalize'
+                    <Button variant='contained' size='small' color='warning'
+                        style={toolbarButtonStyle}
+                        startIcon={todayWorldButtonActive ? <AccountCircleIcon /> : <LanguageIcon />}
+                        onClick={() => {
+                            setTodayWorldButtonActive((prev) => {
+                                if (prev === true) {
+                                    //current is false
+                                    //my interviews
+                                    viewHandler('month')
+                                    return false;
+                                } else {
+                                    //today world interviews
+                                    viewHandler('day')
+                                    return true;
+                                }
+                            })
                         }}
+                    >{todayWorldButtonActive ? 'Me' : 'Today'}</Button>
+                    <Button disabled={todayWorldButtonActive} variant='contained' size='small' color='info'
+                        style={toolbarButtonStyle}
                         startIcon={<DateRangeIcon style={{ fontSize: 15 }} />}
                         onClick={() => viewHandler((props.view === 'agenda') ? 'month' : 'agenda')}
                     >{props.view === 'agenda' ? 'Month' : 'Agenda'}</Button>
                     <Button variant="contained" size='small'
-                        style={{
-                            fontFamily: 'urbanist', fontSize: 14, fontWeight: 300,
-                            backgroundColor: '#4382fe', textTransform: 'capitalize'
-                        }}
+                        style={toolbarButtonStyle}
                         startIcon={<AddIcon style={{ fontSize: 15 }} />}
-                        onClick={() => setOpenInterview(true)}>Interview</Button>
+                        onClick={() => setOpenInterview(true)}
+                    >Interview</Button>
                 </div>
             </div >
         )
@@ -187,13 +229,11 @@ export default function CalendarTool({ interviews, setCurrentSelectedInterviewIn
 
             <Calendar
                 localizer={localizer}
-                events={myCalendarInterviews}
+                events={myCalendarEvents}
                 startAccessor="start"
                 endAccessor="end"
                 style={{
                     height: "80vh",
-                    // textTransform: 'uppercase',
-                    fontFamily: 'Urbanist',
                     fontStyle: 'initial'
                 }}
                 defaultView='month'

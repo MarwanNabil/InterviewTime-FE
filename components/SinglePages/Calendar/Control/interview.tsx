@@ -25,6 +25,9 @@ import LinearProgress from '@mui/material/LinearProgress';
 //Helpers
 import { interviewUIArray, dummyInterviewsTimes } from '@helpers/index';
 
+//Hooks
+import { useRouter } from 'next/router';
+
 interface dateUI {
     actualDate: Date;
     daySMonth: String
@@ -84,8 +87,9 @@ const Interview = () => {
 
 
     //Schedule Request
-    const [isLoadingRequest, setIsLoadingRequest] = React.useState<boolean>(false);
     const dispatch = useDispatch()
+    const router = useRouter()
+    const [isLoadingRequest, setIsLoadingRequest] = React.useState<boolean>(false);
 
 
     const scheduleButtonHandler = async () => {
@@ -96,11 +100,11 @@ const Interview = () => {
                 startDate: suggestTimesInThatDate[timeIndex].date,
                 interviewType: interviewTypeIndex
             }));
+            router.reload();
         } catch (e) {
             console.log(e);
         }
         setIsLoadingRequest(false);
-
     }
     return (
         <div style={{ height: 400, overflowY: 'auto' }}>

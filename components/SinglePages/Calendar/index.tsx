@@ -22,7 +22,7 @@ export default function CalendarPage() {
     const dispatch = useDispatch()
     const [loadedFromServer, loadedFromServerHandler] = React.useState(false);
     const [targetedInterviews, setTargetedInverviews] = React.useState<IInterviewData[]>([]);
-    const interviewsSelector = useSelector((state: any) => state.interview.interviews[1]);
+    const interviewsSelector = useSelector((state: any) => state.interview.interviews)[0];
 
     //Interview Dialog
     const [openedDialog, setOpenedDialog] = React.useState<boolean>(false);
@@ -56,6 +56,7 @@ export default function CalendarPage() {
                     if (activeCategory === item.interviewType)
                         targetedInterviewsBuffer.push(item);
             })
+
             setTargetedInverviews(targetedInterviewsBuffer);
 
             loadedFromServerHandler(true);

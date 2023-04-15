@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 
 //UI
 import { Grid } from '@material-ui/core';
@@ -14,16 +13,26 @@ import CategoryIcon from '@mui/icons-material/Category';
 import CallIcon from '@mui/icons-material/Call';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import InfoIcon from '@mui/icons-material/Info';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 //Helpers
+import { useDispatch } from 'react-redux';
+import { interviewActions } from 'redux/index';
 import { IInterviewData, interviewUIArray } from '@helpers/Interview';
 
+//Hooks
+import { useRouter } from 'next/router';
 
 type InfoPropsType = {
     interview: IInterviewData
 }
 
 const Info = ({ interview }: InfoPropsType) => {
+    //Hooks
+    const router = useRouter()
+    const dispatch = useDispatch()
+    const [isRemovingInterview, setIsRemovingInterview] = React.useState<boolean>(false);
+
     //Css Styles
     const useStyles = makeStyles((theme) => ({
         grid: {
@@ -36,11 +45,10 @@ const Info = ({ interview }: InfoPropsType) => {
             height: 450
         },
         cell: {
-            // display: 'flex',
-            // alignItems: 'start',
-            // justifyContent: 'start',
-            // // backgroundColor: theme.palette.grey[400],
-            // height: '100%',
+            display: 'flex',
+            alignItems: 'start',
+            justifyContent: 'start',
+            columnGap: 5
         },
         iconCell: {
             display: 'flex',
@@ -103,7 +111,7 @@ const Info = ({ interview }: InfoPropsType) => {
             </Grid>
             <Grid item xs={6}>
                 <div className={classes.iconCell}>
-                    <CallIcon className={classes.iconStyle} />
+                    <SettingsIcon className={classes.iconStyle} />
                 </div>
             </Grid>
             <Grid item xs={6}>
@@ -115,6 +123,14 @@ const Info = ({ interview }: InfoPropsType) => {
                             </Button>
                         </a>
                     </Link>
+                    <Button variant='contained' color='error' size='small' onClick={async () => {
+                        setIsRemovingInterview(true);
+                        await dispatch(interviewActions.deleteInterview({ interviewId: interview._id.toString() }))
+                        setIsRemovingInterview(false);
+                        router.reload()
+                    }} disabled={isRemovingInterview}>
+                        Remove
+                    </Button>
                 </div>
             </Grid>
             <Grid item xs={6}>

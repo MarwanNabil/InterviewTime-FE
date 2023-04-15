@@ -12,12 +12,18 @@ interface IinterviewState {
   interviewsLoadedDate: String;
   interviewsCounts: Number;
   interviews: IInterviewData[];
+  worldInterviewsDate: String;
+  worldInterviewsCounts: Number;
+  worldInterviews: IInterviewData[];
 }
 
 const initialState: IinterviewState = {
   interviewsLoadedDate: "",
   interviewsCounts: 0,
   interviews: [],
+  worldInterviewsDate: "",
+  worldInterviewsCounts: 0,
+  worldInterviews: [],
 };
 
 const interviewSlice = createSlice({
@@ -26,11 +32,14 @@ const interviewSlice = createSlice({
   reducers: {
     load(state, action) {
       state.interviewsCounts += action.payload.interviewsCount;
-      state.interviews = [...state.interviews, action.payload.interviews];
-      state.interviewsLoadedDate += action.payload.interviewsLoadedDate;
+      state.interviews = [action.payload.interviews];
+      state.interviewsLoadedDate = new Date().toISOString();
     },
-    post(state, action) {},
-    delete(state, action) {},
+    loadTodayWorldInterviews(state, action) {
+      state.worldInterviewsDate = new Date().toISOString();
+      state.worldInterviewsCounts = action.payload.worldInterviewsCounts;
+      state.worldInterviews = [action.payload.worldInterviews];
+    },
   },
 });
 
@@ -70,10 +79,46 @@ function scheduleInterview(values: { startDate: Date; interviewType: Number }) {
   };
 }
 
+function requestTodayWorldInterviews() {
+  return async (dispatch: Dispath) => {
+    try {
+      const res = await interviewAPI.get("today");
+      const data = res.data;
+
+      dispatch(actions.loadTodayWorldInterviews(data));
+
+      localStorage.setItem(
+        "worldInterviews",
+        JSON.stringify({ worldInterviewsDate: new Date(), ...data })
+      );
+    } catch (err) {
+      throw err;
+    }
+  };
+}
+
+function deleteInterview(values: { interviewId: string }) {
+  return async (dispatch: Dispath) => {
+    try {
+      const res = await interviewAPI.delete("", {
+        data: {
+          interviewId: values.interviewId.toString(),
+        },
+      });
+
+      const data = res.data;
+    } catch (err) {
+      throw err;
+    }
+  };
+}
+
 export const interviewActions = {
   list,
   load: actions.load,
   post: scheduleInterview,
+  requestTodayWorldInterviews,
+  deleteInterview,
 };
 
 export default interviewSlice.reducer;

@@ -103,6 +103,7 @@ const SignUp = ({ openDialog, setOpenDialog }: SignUpProps) => {
                 }
             }
             actions.setSubmitting(false)
+            setOpenDialog(false);
         },
 
     })
@@ -219,7 +220,7 @@ export default SignUp;
 const SignUpSchema = Yup.object().shape({
     firstName: Yup.string().min(3).max(10).required('Required'),
     lastName: Yup.string().min(3).max(30).required('Required'),
-    username: Yup.string().required('Required'),
+    username: Yup.string().min(3).max(10).required('Required'),
     email: Yup.string().email('invalid email.').required('Required'),
     password: Yup.string()
         .min(8, 'too short.')
